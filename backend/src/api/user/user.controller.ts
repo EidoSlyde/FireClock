@@ -17,7 +17,7 @@ export class UserController {
   private readonly service: UserService;
 
   @Get(':id')
-  public getUser(@Param('user_id', ParseIntPipe) id: number): Promise<User> {
+  public getUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.service.getUser(id);
   }
 
