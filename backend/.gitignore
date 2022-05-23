@@ -1,6 +1,3 @@
-# Database Env
-src\common\envs\development.env
-
 # compiled output
 /dist
 /node_modules
