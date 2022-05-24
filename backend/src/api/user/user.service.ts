@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './user.dto';
 import { User } from './user.entity';
+import { bcrypt } from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -25,5 +26,7 @@ export class UserService {
 }
 
 function hashPassword(password: string): any {
-  return 'lol';
+  const salt = bcrypt.genSalt();
+  const hash = bcrypt.hash(password, salt);
+  return hash;
 }
