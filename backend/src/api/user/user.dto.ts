@@ -4,8 +4,9 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   public username: string;
-  public hashed_password: string;
-
   @IsEmail()
   public email: string;
+  @IsString()
+  @IsNotEmpty()
+  public password: string;
 }

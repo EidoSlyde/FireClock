@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString } from 'class-validator';
 export class CreateActivityDto {
   @IsString()
   @IsNotEmpty()
-  public name: string;
-  public user_id: number;
-  public parent: number;
+  public task_id: number;
+  public start_date: Date;
+  public duration: string;
 }

@@ -16,9 +16,8 @@ export class QuotaService {
   public createQuota(body: CreateQuotaDto): Promise<Quota> {
     const quota: Quota = new Quota();
 
-    quota.name = body.name;
-    quota.user_id = body.user_id;
-    quota.parent = body.parent;
+    quota.task_id = body.task_id;
+    quota.duration = body.duration;
 
     return this.repository.save(quota);
   }

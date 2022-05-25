@@ -16,9 +16,9 @@ export class ActivityService {
   public createActivity(body: CreateActivityDto): Promise<Activity> {
     const activity: Activity = new Activity();
 
-    activity.name = body.name;
-    activity.user_id = body.user_id;
-    activity.parent = body.parent;
+    activity.task_id = body.task_id;
+    activity.start_date = body.start_date;
+    activity.duration = body.duration;
 
     return this.repository.save(activity);
   }

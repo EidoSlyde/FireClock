@@ -11,10 +11,10 @@ export class Task {
   @PrimaryGeneratedColumn()
   public task_id!: number;
 
-  @Column({ type: 'number' })
+  @Column({ type: 'uuid' })
   public user_id: number;
 
-  @Column({ type: 'number' })
+  @Column({ type: 'uuid' })
   public parent: number;
 
   @Column({ type: 'varchar', length: 120 })

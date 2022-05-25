@@ -11,14 +11,11 @@ export class Quota {
   @PrimaryGeneratedColumn()
   public quota_id!: number;
 
-  @Column({ type: 'number' })
-  public user_id: number;
-
-  @Column({ type: 'number' })
-  public parent: number;
+  @Column({ type: 'uuid' })
+  public task_id: number;
 
   @Column({ type: 'varchar', length: 120 })
-  public name: string;
+  public duration: string;
 
   @Column({ type: 'boolean', default: false })
   public isDeleted: boolean;

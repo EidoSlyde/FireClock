@@ -3,7 +3,8 @@ import { IsNotEmpty, IsString } from 'class-validator';
 export class CreateQuotaDto {
   @IsString()
   @IsNotEmpty()
-  public name: string;
-  public user_id: number;
-  public parent: number;
+  public task_id: number;
+  @IsString()
+  @IsNotEmpty()
+  public duration: string;
 }
