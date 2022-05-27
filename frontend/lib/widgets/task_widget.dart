@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intersperse/intersperse.dart';
 
-class Task extends HookConsumerWidget {
-  const Task({
+const _taskHeight = 64.0;
+const _vertPaddingSize = 6.0;
+const _leftPaddingSize = 24.0;
+
+final taskColors = [
+  Colors.blue.shade400,
+  Colors.orange.shade400,
+  Colors.green.shade400,
+];
+
+class TaskItem extends HookConsumerWidget {
+  const TaskItem({
     Key? key,
     this.name = "",
     this.selected = false,
@@ -41,10 +50,10 @@ class Task extends HookConsumerWidget {
           borderRadius: BorderRadius.circular(4),
           color: color,
         ),
-        height: 60,
+        height: _taskHeight - _vertPaddingSize,
         width: double.infinity,
         alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.only(left: 18),
+        padding: const EdgeInsets.only(left: 12),
         child: Row(
           children: [
             AnimatedRotation(
@@ -57,7 +66,7 @@ class Task extends HookConsumerWidget {
                 onPressed: () => opened.value = !opened.value,
               ),
             ),
-            const SizedBox(width: 14),
+            const SizedBox(width: 8),
             Text(
               name,
               style: TextStyle(
@@ -69,20 +78,22 @@ class Task extends HookConsumerWidget {
     );
 
     return Column(
-      children: intersperse(
-        const SizedBox(height: 6),
-        [
-          singleTask,
-          SizeTransition(
-              sizeFactor: CurvedAnimation(
-                  parent: childrenAnimationController, curve: Curves.easeOut),
-              child: Column(children: [
-                for (final child in children)
-                  Padding(
-                      padding: const EdgeInsets.only(left: 24), child: child)
-              ])),
-        ],
-      ).toList(),
+      children: [
+        Padding(
+            padding: const EdgeInsets.symmetric(vertical: _vertPaddingSize / 2),
+            child: singleTask),
+        SizeTransition(
+          sizeFactor: CurvedAnimation(
+              parent: childrenAnimationController, curve: Curves.easeOut),
+          child: Column(children: [
+            for (final child in children)
+              Padding(
+                padding: const EdgeInsets.only(left: _leftPaddingSize),
+                child: child,
+              )
+          ]),
+        ),
+      ],
     );
   }
 }

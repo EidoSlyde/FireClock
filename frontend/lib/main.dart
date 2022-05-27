@@ -1,4 +1,5 @@
-import 'package:fireclock/task_list.dart';
+import 'package:fireclock/task.dart';
+import 'package:fireclock/widgets/task_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -26,33 +27,24 @@ class FireClockApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      body: Task(
-        name: "Computer Science",
-        color: Colors.blue.shade400,
+    final tasks = exampleTasks;
+    TaskItem toTaskItem(Task task, {int level = 0}) {
+      return TaskItem(
+        name: task.name,
+        color: taskColors[level % taskColors.length],
+        selected: false,
+        onSelect: () {},
         children: [
-          Task(
-            name: "Web Development",
-            color: Colors.orange.shade400,
-            children: [
-              Task(name: "Learn Angular", color: Colors.green.shade400),
-              Task(
-                  name: "Finish Eidovote backend",
-                  selected: true,
-                  color: Colors.green.shade400),
-              Task(name: "BEM Conventions", color: Colors.green.shade400),
-            ],
-          ),
-          Task(
-            name: "System Programming",
-            color: Colors.orange.shade400,
-            children: [
-              Task(name: "Learn x86 assembly", color: Colors.green.shade400),
-              Task(name: "Learn C++", color: Colors.green.shade400),
-              Task(name: "Game engine in Rust", color: Colors.green.shade400),
-            ],
-          )
+          ...task.children.map((t) => toTaskItem(t, level: level + 1))
         ],
+      );
+    }
+
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [...tasks.map(toTaskItem)],
+        ),
       ),
     );
   }
