@@ -1,4 +1,6 @@
+import 'package:fireclock/task_list.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,53 +16,43 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const FireClockApp(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
+class FireClockApp extends ConsumerWidget {
+  const FireClockApp({Key? key}) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      body: Task(
+        name: "Computer Science",
+        color: Colors.blue.shade400,
+        children: [
+          Task(
+            name: "Web Development",
+            color: Colors.orange.shade400,
+            children: [
+              Task(name: "Learn Angular", color: Colors.green.shade400),
+              Task(
+                  name: "Finish Eidovote backend",
+                  selected: true,
+                  color: Colors.green.shade400),
+              Task(name: "BEM Conventions", color: Colors.green.shade400),
+            ],
+          ),
+          Task(
+            name: "System Programming",
+            color: Colors.orange.shade400,
+            children: [
+              Task(name: "Learn x86 assembly", color: Colors.green.shade400),
+              Task(name: "Learn C++", color: Colors.green.shade400),
+              Task(name: "Game engine in Rust", color: Colors.green.shade400),
+            ],
+          )
+        ],
       ),
     );
   }
