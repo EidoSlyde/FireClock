@@ -22,4 +22,19 @@ export class TaskService {
 
     return this.repository.save(task);
   }
+
+  public updateTask(id: number, body: CreateTaskDto): Promise<Task> {
+    const task: Task = new Task();
+
+    task.task_id = id;
+    task.name = body.name;
+    task.user_id = body.user_id;
+    task.parent = body.parent;
+
+    return this.repository.save(task);
+  }
+
+  public deleteTask(id: number): Promise<Task> {
+    return this.repository.delete({ task_id: id });
+  }
 }

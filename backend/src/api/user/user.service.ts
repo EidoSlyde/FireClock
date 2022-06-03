@@ -23,6 +23,21 @@ export class UserService {
 
     return this.repository.save(user);
   }
+
+  public updateUser(id: number, body: CreateUserDto): Promise<User> {
+    const user: User = new User();
+
+    user.user_id = id;
+    user.username = body.username;
+    user.email = body.email;
+    user.hashed_password = hashPassword(body.password);
+
+    return this.repository.save(user);
+  }
+
+  public deleteUser(id: number): Promise<User> {
+    return this.repository.delete({ user_id: id });
+  }
 }
 
 function hashPassword(password: string): any {

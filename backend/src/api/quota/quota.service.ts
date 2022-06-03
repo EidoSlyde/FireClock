@@ -21,4 +21,18 @@ export class QuotaService {
 
     return this.repository.save(quota);
   }
+
+  public updateQuota(id: number, body: CreateQuotaDto): Promise<Quota> {
+    const quota: Quota = new Quota();
+
+    quota.quota_id = id;
+    quota.task_id = body.task_id;
+    quota.duration = body.duration;
+
+    return this.repository.save(quota);
+  }
+
+  public deleteQuota(id: number): Promise<Quota> {
+    return this.repository.delete({ quota_id: id });
+  }
 }

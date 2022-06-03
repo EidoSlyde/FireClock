@@ -22,4 +22,22 @@ export class ActivityService {
 
     return this.repository.save(activity);
   }
+
+  public updateActivity(
+    id: number,
+    body: CreateActivityDto,
+  ): Promise<Activity> {
+    const activity: Activity = new Activity();
+
+    activity.activity_id = id;
+    activity.task_id = body.task_id;
+    activity.start_date = body.start_date;
+    activity.duration = body.duration;
+
+    return this.repository.save(activity);
+  }
+
+  public deleteActivity(id: number): Promise<Activity> {
+    return this.repository.delete({ activity_id: id });
+  }
 }

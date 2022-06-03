@@ -25,4 +25,19 @@ export class ActivityController {
   public createActivity(@Body() body: CreateActivityDto): Promise<Activity> {
     return this.service.createActivity(body);
   }
+
+  @Post()
+  public updateActivity(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: CreateActivityDto,
+  ): Promise<Activity> {
+    return this.service.updateActivity(id, body);
+  }
+
+  @Post()
+  public deleteActivity(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<Activity> {
+    return this.service.deleteActivity(id);
+  }
 }

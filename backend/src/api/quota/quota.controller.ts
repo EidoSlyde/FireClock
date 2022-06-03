@@ -25,4 +25,17 @@ export class QuotaController {
   public createQuota(@Body() body: CreateQuotaDto): Promise<Quota> {
     return this.service.createQuota(body);
   }
+
+  @Post()
+  public updateQuota(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: CreateQuotaDto,
+  ): Promise<Quota> {
+    return this.service.updateQuota(id, body);
+  }
+
+  @Post()
+  public deleteQuota(@Param('id', ParseIntPipe) id: number): Promise<Quota> {
+    return this.service.deleteQuota(id);
+  }
 }

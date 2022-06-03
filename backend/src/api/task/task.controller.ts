@@ -25,4 +25,17 @@ export class TaskController {
   public createTask(@Body() body: CreateTaskDto): Promise<Task> {
     return this.service.createTask(body);
   }
+
+  @Post()
+  public updateTask(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: CreateTaskDto,
+  ): Promise<Task> {
+    return this.service.updateTask(id, body);
+  }
+
+  @Post()
+  public deleteTask(@Param('id', ParseIntPipe) id: number): Promise<Task> {
+    return this.service.deleteTask(id);
+  }
 }
