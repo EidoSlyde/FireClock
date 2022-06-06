@@ -32,7 +32,7 @@ export class QuotaService {
     return this.repository.save(quota);
   }
 
-  public deleteQuota(id: number): Promise<Quota> {
-    return this.repository.delete({ quota_id: id });
+  public async deleteQuota(id: number): Promise<Quota> {
+    return this.repository.remove(await this.getQuota(id));
   }
 }

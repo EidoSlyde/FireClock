@@ -34,7 +34,7 @@ export class TaskService {
     return this.repository.save(task);
   }
 
-  public deleteTask(id: number): Promise<Task> {
-    return this.repository.delete({ task_id: id });
+  public async deleteTask(id: number): Promise<Task> {
+    return this.repository.remove(await this.getTask(id));
   }
 }

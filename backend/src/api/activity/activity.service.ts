@@ -37,7 +37,7 @@ export class ActivityService {
     return this.repository.save(activity);
   }
 
-  public deleteActivity(id: number): Promise<Activity> {
-    return this.repository.delete({ activity_id: id });
+  public async deleteActivity(id: number): Promise<Activity> {
+    return this.repository.remove(await this.getActivity(id));
   }
 }
