@@ -5,7 +5,7 @@ import { AuthService } from './auth.service';
 @Injectable()
 export class ApiKeyStrategy extends PassportStrategy(HeaderAPIKeyStrategy) {
   constructor(private authService: AuthService) {
-    super({ header: 'apiKey', prefix: '' }, true, (apikey, done, req) => {
+    super({ header: 'x-api-key', prefix: '' }, true, (apikey, done, req) => {
       const checkKey = authService.validateApiKey(apikey);
       if (!checkKey) {
         return done(false);

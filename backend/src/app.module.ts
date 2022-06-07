@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
@@ -10,6 +10,7 @@ import { TaskModule } from './api/task/task.module';
 import { QuotaModule } from './api/quota/quota.module';
 import { ActivityModule } from './api/activity/activity.module';
 import { AuthModule } from './auth/auth.module';
+import { AuthMiddleware } from './middleware/auth.middleware';
 
 const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
 
@@ -26,4 +27,8 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthMiddleware).forRoutes('');
+  }
+}
