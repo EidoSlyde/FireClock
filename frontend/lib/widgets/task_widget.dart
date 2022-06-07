@@ -153,8 +153,8 @@ class TaskList extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final scrollController = useScrollController();
     final scrollOffset = useState(0.0);
-    scrollController
-        .addListener(() => scrollOffset.value = scrollController.offset);
+    scrollController.addListener(
+        () => scrollOffset.value = scrollController.position.pixels);
     final foldedMap = useState(
         Map<int, bool>.unmodifiable({})); // Maps task id to folded boolean
     final currentDraggingPos = useState<_CurrDraggedTask?>(null);
@@ -173,9 +173,9 @@ class TaskList extends HookConsumerWidget {
 
     return Stack(
       children: [
-        ListView(
+        SingleChildScrollView(
           controller: scrollController,
-          children: [
+          child: Column(children: [
             for (final t in tasks)
               _RecTaskWidget(
                 t,
@@ -258,7 +258,7 @@ class TaskList extends HookConsumerWidget {
                     scrollOffsetAtPanStart.value = scrollOffset.value,
               ),
             const SizedBox(height: 12),
-          ],
+          ]),
         ),
         if (currentDraggingPos.value != null)
           Padding(
