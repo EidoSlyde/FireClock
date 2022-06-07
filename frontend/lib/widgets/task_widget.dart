@@ -157,13 +157,13 @@ class TaskList extends HookConsumerWidget {
         .addListener(() => scrollOffset.value = scrollController.offset);
     final foldedMap = useState(
         Map<int, bool>.unmodifiable({})); // Maps task id to folded boolean
-    bool isFolded(Task t) => foldedMap.value[t.id] ?? false;
     final currentDraggingPos = useState<_CurrDraggedTask?>(null);
     final scrollOffsetAtPanStart = useState(0.0);
 
+    bool isFolded(Task t) => foldedMap.value[t.id] ?? false;
     final flatVisTasks = tasks
-        .expand(
-            (t) => recToList<Task>(t, ((t2) => isFolded(t) ? [] : t2.children)))
+        .expand((t) =>
+            recToList<Task>(t, ((t2) => isFolded(t2) ? [] : t2.children)))
         .toList();
 
     Iterable<RecAsList<Task>> getChildren(int id) {
