@@ -161,6 +161,11 @@ class TaskList extends HookConsumerWidget {
             (t) => recToList<Task>(t, ((t2) => isFolded(t) ? [] : t2.children)))
         .toList();
 
+    Iterable<RecAsList<Task>> getChildren(int id) {
+      final it = flatVisTasks.skipWhile((t) => t.value.id != id);
+      return it.skip(1).takeWhile((t) => t.depth > it.first.depth);
+    }
+
     // print({scrollOffset, currentDraggingPos.value?.newYIdx});
 
     return Stack(
@@ -182,30 +187,63 @@ class TaskList extends HookConsumerWidget {
                           .round();
                   final currVisIdx =
                       flatVisTasks.indexWhere((t) => t.value.id == task.id);
-                  final newVisIdx = currVisIdx + relIdxOffset;
+                  var newVisIdx = currVisIdx + relIdxOffset;
 
                   final currDepth = flatVisTasks[currVisIdx].depth;
                   final relDepthOffset =
                       (d.localPosition.dx / _indentWidth).floor();
-                  final newDepth = currDepth + relDepthOffset;
+                  var newDepth = currDepth + relDepthOffset;
+
+                  // Ensure in bound
+                  newVisIdx = newVisIdx.clamp(0, flatVisTasks.length);
+                  newDepth = max(0, newDepth);
+
+                  // First task cannot have parent
+                  if (newVisIdx == 0) newDepth = 0;
+
+                  // Can only indent one step to the right of the previous task to parent to it
+                  if (newVisIdx > 0 &&
+                      flatVisTasks[newVisIdx - 1].depth < newDepth - 1) {
+                    newDepth = flatVisTasks[newVisIdx - 1].depth + 1;
+                  }
+
+                  // Cannot indent left if it means it would add unwanted children
+                  final nextsNonChild = flatVisTasks
+                      .skip(currVisIdx + 1)
+                      .skipWhile((t) => t.depth > currDepth);
+                  if (nextsNonChild.isNotEmpty && currVisIdx == newVisIdx) {
+                    newDepth = max(newDepth, nextsNonChild.first.depth);
+                  }
+                  if (currVisIdx != newVisIdx &&
+                      newVisIdx < flatVisTasks.length) {
+                    newDepth = max(newDepth, flatVisTasks[newVisIdx].depth);
+                  }
+
+                  // Cannot put a task in its own children
+                  if (relIdxOffset > 0 &&
+                      getChildren(task.id).length + 1 >= relIdxOffset) {
+                    newVisIdx = currVisIdx;
+                    newDepth = currDepth;
+                  }
 
                   currentDraggingPos.value = _CurrDraggedTask(
-                      newYIdx: max(0, newVisIdx),
-                      newDepth: max(0, newDepth),
-                      task: task);
+                      newYIdx: newVisIdx, newDepth: newDepth, task: task);
                 },
                 onPanEnd: () => currentDraggingPos.value = null,
                 onPanStart: () =>
                     scrollOffsetAtPanStart.value = scrollOffset.value,
               ),
+            const SizedBox(height: 12),
           ],
         ),
         if (currentDraggingPos.value != null)
           Padding(
             padding: EdgeInsets.only(
-              top: currentDraggingPos.value!.newYIdx * _taskHeight -
-                  scrollOffset.value,
-              left: currentDraggingPos.value!.newDepth * _indentWidth,
+              top: max(
+                  0,
+                  currentDraggingPos.value!.newYIdx * _taskHeight -
+                      scrollOffset.value),
+              left: max(0, currentDraggingPos.value!.newDepth * _indentWidth),
             ),
             child: Container(
               width: double.infinity,
