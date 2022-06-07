@@ -140,9 +140,14 @@ class _RecTaskWidget extends HookConsumerWidget {
 }
 
 class TaskList extends HookConsumerWidget {
-  const TaskList(this.tasks, {Key? key}) : super(key: key);
+  const TaskList(
+    this.tasks, {
+    this.onMove,
+    Key? key,
+  }) : super(key: key);
 
   final List<Task> tasks;
+  final Function(Task moved, Task? parent, int childPos)? onMove;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -165,8 +170,6 @@ class TaskList extends HookConsumerWidget {
       final it = flatVisTasks.skipWhile((t) => t.value.id != id);
       return it.skip(1).takeWhile((t) => t.depth > it.first.depth);
     }
-
-    // print({scrollOffset, currentDraggingPos.value?.newYIdx});
 
     return Stack(
       children: [
@@ -227,9 +230,30 @@ class TaskList extends HookConsumerWidget {
                   }
 
                   currentDraggingPos.value = _CurrDraggedTask(
-                      newYIdx: newVisIdx, newDepth: newDepth, task: task);
+                      newVisIdx: newVisIdx, newDepth: newDepth, task: task);
                 },
-                onPanEnd: () => currentDraggingPos.value = null,
+                onPanEnd: () {
+                  if (currentDraggingPos.value == null) return;
+                  final moved = currentDraggingPos.value!.task;
+
+                  var parentVisIdx = currentDraggingPos.value!.newVisIdx - 1;
+                  var childPos = 0;
+                  while (parentVisIdx >= 0 &&
+                      flatVisTasks[parentVisIdx].depth >=
+                          currentDraggingPos.value!.newDepth) {
+                    if (flatVisTasks[parentVisIdx].depth ==
+                        currentDraggingPos.value!.newDepth) {
+                      childPos += 1;
+                    }
+                    parentVisIdx -= 1;
+                  }
+                  final parent = parentVisIdx < 0
+                      ? null
+                      : flatVisTasks[parentVisIdx].value;
+
+                  onMove?.call(moved, parent, childPos);
+                  currentDraggingPos.value = null;
+                },
                 onPanStart: () =>
                     scrollOffsetAtPanStart.value = scrollOffset.value,
               ),
@@ -241,7 +265,7 @@ class TaskList extends HookConsumerWidget {
             padding: EdgeInsets.only(
               top: max(
                   0,
-                  currentDraggingPos.value!.newYIdx * _taskHeight -
+                  currentDraggingPos.value!.newVisIdx * _taskHeight -
                       scrollOffset.value),
               left: max(0, currentDraggingPos.value!.newDepth * _indentWidth),
             ),
@@ -257,12 +281,12 @@ class TaskList extends HookConsumerWidget {
 }
 
 class _CurrDraggedTask {
-  final int newYIdx;
+  final int newVisIdx;
   final int newDepth;
   final Task task;
 
   _CurrDraggedTask({
-    required this.newYIdx,
+    required this.newVisIdx,
     required this.newDepth,
     required this.task,
   });
