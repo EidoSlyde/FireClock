@@ -9,6 +9,7 @@ import { UserModule } from './api/user/user.module';
 import { TaskModule } from './api/task/task.module';
 import { QuotaModule } from './api/quota/quota.module';
 import { ActivityModule } from './api/activity/activity.module';
+import { AuthModule } from './auth/auth.module';
 
 const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
 
@@ -20,6 +21,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
     TaskModule,
     QuotaModule,
     ActivityModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
