@@ -140,25 +140,30 @@ class _RecTaskWidget extends HookConsumerWidget {
 }
 
 class TaskList extends HookConsumerWidget {
-  const TaskList(this.tasks, {Key? key}) : super(key: key);
+  const TaskList(
+    this.tasks, {
+    this.onMove,
+    Key? key,
+  }) : super(key: key);
 
   final List<Task> tasks;
+  final Function(Task moved, Task? parent, int childPos)? onMove;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final scrollController = useScrollController();
     final scrollOffset = useState(0.0);
-    scrollController
-        .addListener(() => scrollOffset.value = scrollController.offset);
+    scrollController.addListener(
+        () => scrollOffset.value = scrollController.position.pixels);
     final foldedMap = useState(
         Map<int, bool>.unmodifiable({})); // Maps task id to folded boolean
-    bool isFolded(Task t) => foldedMap.value[t.id] ?? false;
     final currentDraggingPos = useState<_CurrDraggedTask?>(null);
     final scrollOffsetAtPanStart = useState(0.0);
 
+    bool isFolded(Task t) => foldedMap.value[t.id] ?? false;
     final flatVisTasks = tasks
-        .expand(
-            (t) => recToList<Task>(t, ((t2) => isFolded(t) ? [] : t2.children)))
+        .expand((t) =>
+            recToList<Task>(t, ((t2) => isFolded(t2) ? [] : t2.children)))
         .toList();
 
     Iterable<RecAsList<Task>> getChildren(int id) {
@@ -166,13 +171,11 @@ class TaskList extends HookConsumerWidget {
       return it.skip(1).takeWhile((t) => t.depth > it.first.depth);
     }
 
-    // print({scrollOffset, currentDraggingPos.value?.newYIdx});
-
     return Stack(
       children: [
-        ListView(
+        SingleChildScrollView(
           controller: scrollController,
-          children: [
+          child: Column(children: [
             for (final t in tasks)
               _RecTaskWidget(
                 t,
@@ -227,21 +230,42 @@ class TaskList extends HookConsumerWidget {
                   }
 
                   currentDraggingPos.value = _CurrDraggedTask(
-                      newYIdx: newVisIdx, newDepth: newDepth, task: task);
+                      newVisIdx: newVisIdx, newDepth: newDepth, task: task);
                 },
-                onPanEnd: () => currentDraggingPos.value = null,
+                onPanEnd: () {
+                  if (currentDraggingPos.value == null) return;
+                  final moved = currentDraggingPos.value!.task;
+
+                  var parentVisIdx = currentDraggingPos.value!.newVisIdx - 1;
+                  var childPos = 0;
+                  while (parentVisIdx >= 0 &&
+                      flatVisTasks[parentVisIdx].depth >=
+                          currentDraggingPos.value!.newDepth) {
+                    if (flatVisTasks[parentVisIdx].depth ==
+                        currentDraggingPos.value!.newDepth) {
+                      childPos += 1;
+                    }
+                    parentVisIdx -= 1;
+                  }
+                  final parent = parentVisIdx < 0
+                      ? null
+                      : flatVisTasks[parentVisIdx].value;
+
+                  onMove?.call(moved, parent, childPos);
+                  currentDraggingPos.value = null;
+                },
                 onPanStart: () =>
                     scrollOffsetAtPanStart.value = scrollOffset.value,
               ),
             const SizedBox(height: 12),
-          ],
+          ]),
         ),
         if (currentDraggingPos.value != null)
           Padding(
             padding: EdgeInsets.only(
               top: max(
                   0,
-                  currentDraggingPos.value!.newYIdx * _taskHeight -
+                  currentDraggingPos.value!.newVisIdx * _taskHeight -
                       scrollOffset.value),
               left: max(0, currentDraggingPos.value!.newDepth * _indentWidth),
             ),
@@ -257,12 +281,12 @@ class TaskList extends HookConsumerWidget {
 }
 
 class _CurrDraggedTask {
-  final int newYIdx;
+  final int newVisIdx;
   final int newDepth;
   final Task task;
 
   _CurrDraggedTask({
-    required this.newYIdx,
+    required this.newVisIdx,
     required this.newDepth,
     required this.task,
   });
