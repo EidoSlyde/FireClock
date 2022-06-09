@@ -1,4 +1,5 @@
 import 'package:fireclock/task.dart';
+import 'package:fireclock/widgets/activities.dart';
 import 'package:fireclock/widgets/activity_recap.dart';
 import 'package:fireclock/widgets/task_widget.dart';
 import 'package:fireclock/widgets/top_info.dart';
@@ -79,17 +80,21 @@ class FireClockApp extends HookConsumerWidget {
             ),
           ),
           Expanded(
-            child: Column(
+            child: ListView(
+              primary: false,
               children: [
-                TopInfo(
-                  initialText: "Game Engine in Rust",
-                  initalQuota: 12,
-                  activityTimeUnit: activityTimeUnit.value,
-                  quotaTimeUnit: quotaTimeUnit.value,
-                  onActivityTimeUnitChange: (a) => activityTimeUnit.value = a,
-                  onQuotaTimeUnitChange: (q) => quotaTimeUnit.value = q,
-                  onQuotaChange: (d) => print(d),
-                  onTextChange: (d) => print(d),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: TopInfo(
+                    initialText: "Game Engine in Rust",
+                    initalQuota: 12,
+                    activityTimeUnit: activityTimeUnit.value,
+                    quotaTimeUnit: quotaTimeUnit.value,
+                    onActivityTimeUnitChange: (a) => activityTimeUnit.value = a,
+                    onQuotaTimeUnitChange: (q) => quotaTimeUnit.value = q,
+                    onQuotaChange: (d) => print(d),
+                    onTextChange: (d) => print(d),
+                  ),
                 ),
                 Container(
                   color: const Color(0xFF343434),
@@ -134,6 +139,49 @@ class FireClockApp extends HookConsumerWidget {
                         const SizedBox(width: 16),
                       ],
                     ),
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+                  child: ActivityPanel(
+                    onDelete: (id) => print("deleted $id"),
+                    onEndChange: (id, end) => print("end change $id $end"),
+                    onStartChange: (id, start) =>
+                        print("start change $id $start"),
+                    onCreate: (dt) => print("Created range $dt"),
+                    activities: [
+                      ActivityData(
+                          1,
+                          DateTimeRange(
+                              start: DateTime.now(),
+                              end: DateTime.now()
+                                  .add(const Duration(hours: 2)))),
+                      ActivityData(
+                          2,
+                          DateTimeRange(
+                              start: DateTime.now(),
+                              end: DateTime.now()
+                                  .add(const Duration(hours: 2)))),
+                      ActivityData(
+                          3,
+                          DateTimeRange(
+                              start: DateTime.now(),
+                              end: DateTime.now()
+                                  .add(const Duration(hours: 2)))),
+                      ActivityData(
+                          4,
+                          DateTimeRange(
+                              start: DateTime.now(),
+                              end: DateTime.now()
+                                  .add(const Duration(hours: 2)))),
+                      ActivityData(
+                          5,
+                          DateTimeRange(
+                              start: DateTime.now(),
+                              end: DateTime.now()
+                                  .add(const Duration(hours: 2)))),
+                    ],
                   ),
                 ),
               ],

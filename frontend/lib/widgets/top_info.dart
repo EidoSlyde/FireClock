@@ -56,8 +56,7 @@ class TopInfo extends HookConsumerWidget {
 
     const dropdownPadding = EdgeInsets.only(left: 10);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
+    return SizedBox(
       height: 86,
       child: Row(children: [
         Flexible(

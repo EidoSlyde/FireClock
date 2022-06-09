@@ -12,6 +12,7 @@ dependencies:
   collection: ^1.16.0
   flutter:
     sdk: flutter
+  flutter_datetime_picker: ^1.5.1
   flutter_hooks: ^0.18.4
   hooks_riverpod: ^1.0.4
   intersperse: ^2.0.0
