@@ -38,4 +38,9 @@ export class UserController {
   public deleteUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.service.deleteUser(id);
   }
+
+  @Post()
+  public login(@Body() body: any): Promise<User> {
+    return this.service.login(body.username, body.password);
+  }
 }

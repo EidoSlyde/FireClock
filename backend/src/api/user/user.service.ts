@@ -38,6 +38,16 @@ export class UserService {
   public async deleteUser(id: number): Promise<User> {
     return this.repository.remove(await this.getUser(id));
   }
+
+  public async login(username: string, password: string): Promise<User> {
+    const user: User = await this.repository.findOne({
+      where: { username },
+    });
+
+    if (user && bcrypt.comparePassword(password, user.hashed_password)) {
+      return user;
+    }
+  }
 }
 
 function hashPassword(password: string): any {
