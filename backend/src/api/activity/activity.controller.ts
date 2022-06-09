@@ -40,4 +40,23 @@ export class ActivityController {
   ): Promise<Activity> {
     return this.service.deleteActivity(id);
   }
+
+  @Post()
+  public getActivityTotalTime(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<Activity> {
+    return this.service.getActivityTotalTime(id);
+  }
+
+  @Post()
+  public getActivityTotalTimeInInterval(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: any,
+  ): Promise<number> {
+    return this.service.getActivityTotalTimeInInterval(
+      id,
+      body.start,
+      body.end,
+    );
+  }
 }
