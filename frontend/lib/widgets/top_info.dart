@@ -7,19 +7,21 @@ import '../task.dart';
 
 class TopInfo extends HookConsumerWidget {
   const TopInfo({
-    required this.text,
     required this.activityTimeUnit,
     required this.quotaTimeUnit,
     required this.onQuotaChange,
+    required this.onTextChange,
+    this.initialText,
     this.initalQuota = 1,
     this.onActivityTimeUnitChange,
     this.onQuotaTimeUnitChange,
     Key? key,
   }) : super(key: key);
 
-  final String text;
+  final String? initialText;
   final double initalQuota;
   final Function(double) onQuotaChange;
+  final Function(String) onTextChange;
   final ActivityTimeUnit activityTimeUnit;
   final QuotaTimeUnit quotaTimeUnit;
   final Function(ActivityTimeUnit)? onActivityTimeUnitChange;
@@ -37,17 +39,27 @@ class TopInfo extends HookConsumerWidget {
       return () => quotaController.removeListener(l);
     }, [quotaController]);
 
+    final textController = useTextEditingController(
+      text: initialText,
+    );
+    useEffect(() {
+      void l() => onTextChange(textController.text);
+      textController.addListener(l);
+      return () => textController.removeListener(l);
+    }, [textController]);
+
     const dropdownPadding = EdgeInsets.only(left: 10);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 32),
       height: 86,
       child: Row(children: [
-        Text(
-          text,
-          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 32),
+        Flexible(
+          child: TextField(
+            controller: textController,
+            style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 32),
+          ),
         ),
-        const Spacer(),
         SizedBox(
           width: 90,
           child: TextField(

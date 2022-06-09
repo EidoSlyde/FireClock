@@ -37,13 +37,14 @@ class FireClockApp extends HookConsumerWidget {
       body: Column(
         children: [
           TopInfo(
-            text: "Game Engine in Rust",
+            initialText: "Game Engine in Rust",
             initalQuota: 12,
             activityTimeUnit: activityTimeUnit.value,
             quotaTimeUnit: quotaTimeUnit.value,
             onActivityTimeUnitChange: (a) => activityTimeUnit.value = a,
             onQuotaTimeUnitChange: (q) => quotaTimeUnit.value = q,
-            onQuotaChange: (d) => print("todo"),
+            onQuotaChange: (d) => print(d),
+            onTextChange: (d) => print(d),
           ),
           Expanded(
             child: TaskList(
