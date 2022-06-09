@@ -31,6 +31,12 @@ class TopInfo extends HookConsumerWidget {
       text: initalQuota.toInt().toString(),
     );
 
+    useEffect(() {
+      void l() => onQuotaChange(double.parse(quotaController.text));
+      quotaController.addListener(l);
+      return () => quotaController.removeListener(l);
+    }, [quotaController]);
+
     const dropdownPadding = EdgeInsets.only(left: 10);
 
     return Container(
