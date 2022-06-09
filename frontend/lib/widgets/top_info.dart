@@ -34,7 +34,13 @@ class TopInfo extends HookConsumerWidget {
     );
 
     useEffect(() {
-      void l() => onQuotaChange(double.parse(quotaController.text));
+      void l() {
+        final d = double.tryParse(quotaController.text);
+        if (d != null) {
+          onQuotaChange(d);
+        }
+      }
+
       quotaController.addListener(l);
       return () => quotaController.removeListener(l);
     }, [quotaController]);

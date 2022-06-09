@@ -1,9 +1,11 @@
 import 'package:fireclock/task.dart';
+import 'package:fireclock/widgets/activity_recap.dart';
 import 'package:fireclock/widgets/task_widget.dart';
 import 'package:fireclock/widgets/top_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intersperse/intersperse.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,19 +36,11 @@ class FireClockApp extends HookConsumerWidget {
     final quotaTimeUnit = useState(QuotaTimeUnit.day);
 
     return Scaffold(
-      body: Column(
+      body: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TopInfo(
-            initialText: "Game Engine in Rust",
-            initalQuota: 12,
-            activityTimeUnit: activityTimeUnit.value,
-            quotaTimeUnit: quotaTimeUnit.value,
-            onActivityTimeUnitChange: (a) => activityTimeUnit.value = a,
-            onQuotaTimeUnitChange: (q) => quotaTimeUnit.value = q,
-            onQuotaChange: (d) => print(d),
-            onTextChange: (d) => print(d),
-          ),
-          Expanded(
+          SizedBox(
+            width: 300,
             child: TaskList(
               tasks.value,
               onMove: ((moved, parent, childPos) {
@@ -82,6 +76,67 @@ class FireClockApp extends HookConsumerWidget {
                   tasks.value = c;
                 }
               }),
+            ),
+          ),
+          Expanded(
+            child: Column(
+              children: [
+                TopInfo(
+                  initialText: "Game Engine in Rust",
+                  initalQuota: 12,
+                  activityTimeUnit: activityTimeUnit.value,
+                  quotaTimeUnit: quotaTimeUnit.value,
+                  onActivityTimeUnitChange: (a) => activityTimeUnit.value = a,
+                  onQuotaTimeUnitChange: (q) => quotaTimeUnit.value = q,
+                  onQuotaChange: (d) => print(d),
+                  onTextChange: (d) => print(d),
+                ),
+                Container(
+                  color: const Color(0xFF343434),
+                  height: 280,
+                  child: Scrollbar(
+                    child: ListView(
+                      primary: true,
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        const SizedBox(width: 16),
+                        ...intersperse(
+                          const SizedBox(width: 16),
+                          [
+                            ActivityRecap(
+                                date: DateTime.now(),
+                                quota: 60 * 12,
+                                totalActivity: 60 * 10),
+                            ActivityRecap(
+                                date: DateTime.now(),
+                                quota: 60 * 12,
+                                totalActivity: 60 * 10),
+                            ActivityRecap(
+                                date: DateTime.now(),
+                                quota: 60 * 12,
+                                totalActivity: 60 * 10),
+                            ActivityRecap(
+                                date: DateTime.now(),
+                                quota: 60 * 12,
+                                totalActivity: 60 * 10),
+                            ActivityRecap(
+                                date: DateTime.now(),
+                                quota: 60 * 12,
+                                totalActivity: 60 * 10),
+                            ActivityRecap(
+                                date: DateTime.now(),
+                                quota: 60 * 12,
+                                totalActivity: 60 * 10),
+                          ].map((e) => Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 24),
+                              child: e)),
+                        ),
+                        const SizedBox(width: 16),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
