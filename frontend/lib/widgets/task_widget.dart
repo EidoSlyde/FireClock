@@ -250,9 +250,19 @@ class TaskList extends HookConsumerWidget {
                     }
                     parentVisIdx -= 1;
                   }
+
                   final parent = parentVisIdx < 0
                       ? null
                       : flatVisTasks[parentVisIdx].value;
+
+                  final currChildPos =
+                      parent?.children.indexWhere((t) => t.id == moved.id);
+
+                  if (currChildPos != null &&
+                      childPos > currChildPos &&
+                      currChildPos != -1) {
+                    childPos -= 1;
+                  }
 
                   onMove?.call(moved, parent, childPos);
                   currentDraggingPos.value = null;
