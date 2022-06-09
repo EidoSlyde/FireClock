@@ -153,8 +153,11 @@ class TaskList extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final scrollController = useScrollController();
     final scrollOffset = useState(0.0);
-    scrollController.addListener(
-        () => scrollOffset.value = scrollController.position.pixels);
+    useEffect(() {
+      void l() => scrollOffset.value = scrollController.position.pixels;
+      scrollController.addListener(l);
+      return () => scrollController.removeListener(l);
+    }, [scrollController]);
     final foldedMap = useState(
         Map<int, bool>.unmodifiable({})); // Maps task id to folded boolean
     final currentDraggingPos = useState<_CurrDraggedTask?>(null);
@@ -187,7 +190,7 @@ class TaskList extends HookConsumerWidget {
                   // e.g -5 moves 5 levels up, 3 moves 3 levels down
                   final relIdxOffset =
                       ((d.localPosition.dy + scrollAdjust) / _taskHeight)
-                          .round();
+                          .floor();
                   final currVisIdx =
                       flatVisTasks.indexWhere((t) => t.value.id == task.id);
                   var newVisIdx = currVisIdx + relIdxOffset;

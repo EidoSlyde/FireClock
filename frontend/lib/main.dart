@@ -1,5 +1,6 @@
 import 'package:fireclock/task.dart';
 import 'package:fireclock/widgets/task_widget.dart';
+import 'package:fireclock/widgets/top_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -29,10 +30,21 @@ class FireClockApp extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tasks = useState(exampleTasks);
+    final activityTimeUnit = useState(ActivityTimeUnit.minute);
+    final quotaTimeUnit = useState(QuotaTimeUnit.day);
+
     return Scaffold(
       body: Column(
         children: [
-          const SizedBox(height: 90),
+          TopInfo(
+            text: "Game Engine in Rust",
+            initalQuota: 12,
+            activityTimeUnit: activityTimeUnit.value,
+            quotaTimeUnit: quotaTimeUnit.value,
+            onActivityTimeUnitChange: (a) => activityTimeUnit.value = a,
+            onQuotaTimeUnitChange: (q) => quotaTimeUnit.value = q,
+            onQuotaChange: (d) => print("todo"),
+          ),
           Expanded(
             child: TaskList(
               tasks.value,

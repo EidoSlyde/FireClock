@@ -36,3 +36,15 @@ final exampleTasks = [
     Task(id: 21, name: "Workout"),
   ]),
 ];
+
+enum QuotaTimeUnit {
+  day,
+  week,
+  month,
+}
+
+enum ActivityTimeUnit {
+  minute,
+  hour,
+  day,
+}
