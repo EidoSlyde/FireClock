@@ -13,6 +13,22 @@ export class ActivityService {
     return this.repository.findOne({ where: { activity_id: id } });
   }
 
+  public getActivityTotalTime(id: number): Promise<Activity> {
+    return this.repository.query(
+      `SELECT SUM(duration) FROM activity WHERE task_id = ${id}`,
+    );
+  }
+
+  public getActivityTotalTimeInInterval(
+    id: number,
+    start: string,
+    end: string,
+  ): Promise<number> {
+    return this.repository.query(
+      `SELECT SUM(duration) FROM activity WHERE task_id = ${id} AND start_date BETWEEN '${start}' AND '${end}'`,
+    );
+  }
+
   public createActivity(body: CreateActivityDto): Promise<Activity> {
     const activity: Activity = new Activity();
 
