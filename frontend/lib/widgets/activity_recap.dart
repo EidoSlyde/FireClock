@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intersperse/intersperse.dart';
 import 'package:intl/intl.dart';
+
+import '../services/activity_service.dart';
+import '../task.dart';
 
 class ActivityRecap extends HookConsumerWidget {
   const ActivityRecap({
@@ -64,6 +69,62 @@ class ActivityRecap extends HookConsumerWidget {
                 circleWidget,
               ],
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ActivityRecapPanel extends HookConsumerWidget {
+  const ActivityRecapPanel(this.selected, {Key? key}) : super(key: key);
+
+  final Task selected;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final activityService = ref.read(activityServiceProvider);
+    final activities = useStream(activityService.activitiesOfTask(selected.id));
+    return Container(
+      color: const Color(0xFF343434),
+      height: 280,
+      child: Scrollbar(
+        child: ListView(
+          primary: true,
+          scrollDirection: Axis.horizontal,
+          children: [
+            const SizedBox(width: 16),
+            ...intersperse(
+              const SizedBox(width: 16),
+              [
+                ActivityRecap(
+                    date: DateTime.now(),
+                    quota: selected.quota,
+                    totalActivity: 720),
+                ActivityRecap(
+                    date: DateTime.now(),
+                    quota: selected.quota,
+                    totalActivity: 420),
+                ActivityRecap(
+                    date: DateTime.now(),
+                    quota: selected.quota,
+                    totalActivity: 263),
+                ActivityRecap(
+                    date: DateTime.now(),
+                    quota: selected.quota,
+                    totalActivity: 800),
+                ActivityRecap(
+                    date: DateTime.now(),
+                    quota: selected.quota,
+                    totalActivity: 900),
+                ActivityRecap(
+                    date: DateTime.now(),
+                    quota: selected.quota,
+                    totalActivity: 10000),
+              ].map((e) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24), child: e)),
+            ),
+            const SizedBox(width: 16),
           ],
         ),
       ),

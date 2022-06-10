@@ -28,6 +28,13 @@ class MainPage extends HookConsumerWidget {
         useStream(taskService.getTasksOfUser(user.userId));
     if (!tasksSnapshot.hasData) return const Text("Couldn't fetch tasks");
     final tasks = tasksSnapshot.data!;
+    useEffect(() {
+      if (selectedTask.value == null) return;
+      taskService
+          .getById(selectedTask.value!.id)
+          .then((t) => selectedTask.value = t);
+      return null;
+    }, [tasks]);
     final taskList = TaskList(
       tasks,
       onTap: (t) => selectedTask.value = selectedTask.value == t ? null : t,
@@ -50,17 +57,20 @@ class MainPage extends HookConsumerWidget {
         Expanded(
           child: Column(children: [
             if (selectedTask.value != null)
-              TaskTopInfo(
-                key: ValueKey(selectedTask.value!.id),
-                task: selectedTask.value!,
-                onQuotaChange: (quota) => taskService.updateQuota(
-                    taskId: selectedTask.value!.id, newQuota: quota),
-                onQuotaTimeUnitChange: (quotaTimeUnit) =>
-                    taskService.updateQuotaTimeUnit(
-                        taskId: selectedTask.value!.id,
-                        newQuotaTimeUnit: quotaTimeUnit),
-                onNameChange: (name) => taskService.renameTask(
-                    taskId: selectedTask.value!.id, newName: name),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                child: TaskTopInfo(
+                  key: ValueKey(selectedTask.value!.id),
+                  task: selectedTask.value!,
+                  onQuotaChange: (quota) => taskService.updateQuota(
+                      taskId: selectedTask.value!.id, newQuota: quota),
+                  onQuotaTimeUnitChange: (quotaTimeUnit) =>
+                      taskService.updateQuotaTimeUnit(
+                          taskId: selectedTask.value!.id,
+                          newQuotaTimeUnit: quotaTimeUnit),
+                  onNameChange: (name) => taskService.renameTask(
+                      taskId: selectedTask.value!.id, newName: name),
+                ),
               ),
             if (selectedTask.value != null)
               SizedBox(
@@ -70,50 +80,6 @@ class MainPage extends HookConsumerWidget {
           ]),
         )
       ],
-    );
-  }
-}
-
-class ActivityRecapPanel extends HookConsumerWidget {
-  const ActivityRecapPanel(this.selected, {Key? key}) : super(key: key);
-
-  final Task selected;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final activityService = ref.read(activityServiceProvider);
-    final activities = useStream(activityService.activitiesOfTask(selected.id));
-    return Container(
-      color: const Color(0xFF343434),
-      height: 280,
-      child: Scrollbar(
-        child: ListView(
-          primary: true,
-          scrollDirection: Axis.horizontal,
-          children: [
-            const SizedBox(width: 16),
-            ...intersperse(
-              const SizedBox(width: 16),
-              [
-                ActivityRecap(
-                    date: DateTime.now(), quota: 60 * 12, totalActivity: 720),
-                ActivityRecap(
-                    date: DateTime.now(), quota: 60 * 12, totalActivity: 420),
-                ActivityRecap(
-                    date: DateTime.now(), quota: 60 * 12, totalActivity: 263),
-                ActivityRecap(
-                    date: DateTime.now(), quota: 60 * 12, totalActivity: 800),
-                ActivityRecap(
-                    date: DateTime.now(), quota: 60 * 12, totalActivity: 900),
-                ActivityRecap(
-                    date: DateTime.now(), quota: 60 * 12, totalActivity: 10000),
-              ].map((e) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 24), child: e)),
-            ),
-            const SizedBox(width: 16),
-          ],
-        ),
-      ),
     );
   }
 }
