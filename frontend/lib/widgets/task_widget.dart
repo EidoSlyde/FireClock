@@ -303,11 +303,11 @@ class TaskList extends HookConsumerWidget {
                               : flatVisTasks[parentVisIdx].value;
 
                           final currChildPos = parent?.children
-                              .indexWhere((t) => t.id == moved.id);
+                                  .indexWhere((t) => t.id == moved.id) ??
+                              flatVisTasks
+                                  .indexWhere((t) => t.value.id == moved.id);
 
-                          if (currChildPos != null &&
-                              childPos > currChildPos &&
-                              currChildPos != -1) {
+                          if (childPos > currChildPos && currChildPos != -1) {
                             childPos -= 1;
                           }
 
