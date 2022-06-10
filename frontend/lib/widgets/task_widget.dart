@@ -21,6 +21,7 @@ class _TaskWidget extends StatelessWidget {
     this.task, {
     required this.color,
     this.folded = false,
+    this.onTap,
     this.onFolded,
     this.onPanUpdate,
     this.onPanEnd,
@@ -30,6 +31,7 @@ class _TaskWidget extends StatelessWidget {
 
   final Task task;
   final bool folded;
+  final void Function()? onTap;
   final void Function(bool)? onFolded;
   final void Function(DragUpdateDetails)? onPanUpdate;
   final void Function()? onPanEnd;
@@ -38,35 +40,38 @@ class _TaskWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: _taskHeight,
-      width: double.infinity,
-      color: color,
-      child: Row(
-        children: [
-          GestureDetector(
-            onPanUpdate: onPanUpdate,
-            onPanEnd: (d) => onPanEnd?.call(),
-            onPanStart: (d) => onPanStart?.call(),
-            // It is important that the drag icon has no offset from the top and the left
-            child: const SizedBox(
-              height: double.infinity,
-              width: 52,
-              child: Icon(Icons.drag_handle),
-            ),
-          ),
-          Text(task.name),
-          const Spacer(),
-          if (task.children.isNotEmpty)
-            IconButton(
-              onPressed: () => onFolded?.call(!folded),
-              icon: AnimatedRotation(
-                turns: folded ? 0.5 : 0,
-                duration: const Duration(milliseconds: 140),
-                child: const Icon(Icons.arrow_drop_down),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: _taskHeight,
+        width: double.infinity,
+        color: color,
+        child: Row(
+          children: [
+            GestureDetector(
+              onPanUpdate: onPanUpdate,
+              onPanEnd: (d) => onPanEnd?.call(),
+              onPanStart: (d) => onPanStart?.call(),
+              // It is important that the drag icon has no offset from the top and the left
+              child: const SizedBox(
+                height: double.infinity,
+                width: 52,
+                child: Icon(Icons.drag_handle),
               ),
             ),
-        ],
+            Text(task.name),
+            const Spacer(),
+            if (task.children.isNotEmpty)
+              IconButton(
+                onPressed: () => onFolded?.call(!folded),
+                icon: AnimatedRotation(
+                  turns: folded ? 0.5 : 0,
+                  duration: const Duration(milliseconds: 140),
+                  child: const Icon(Icons.arrow_drop_down),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -76,6 +81,7 @@ class _RecTaskWidget extends HookConsumerWidget {
   const _RecTaskWidget(
     this.task, {
     this.foldedMap,
+    this.onTap,
     this.onPanUpdate,
     this.onPanEnd,
     this.onPanStart,
@@ -85,6 +91,7 @@ class _RecTaskWidget extends HookConsumerWidget {
 
   final Task task;
   final ValueNotifier<Map<int, bool>>? foldedMap;
+  final void Function(Task)? onTap;
   final void Function(DragUpdateDetails, Task)? onPanUpdate;
   final void Function()? onPanEnd;
   final void Function()? onPanStart;
@@ -107,6 +114,7 @@ class _RecTaskWidget extends HookConsumerWidget {
           task,
           color: taskColors[depth % taskColors.length],
           folded: folded,
+          onTap: () => onTap?.call(task),
           onFolded: (b) {
             if (foldedMap == null) return;
             foldedMap!.value = {...foldedMap!.value, task.id: b};
@@ -126,6 +134,7 @@ class _RecTaskWidget extends HookConsumerWidget {
                     e,
                     depth: depth + 1,
                     foldedMap: foldedMap,
+                    onTap: onTap,
                     onPanUpdate: onPanUpdate,
                     onPanEnd: onPanEnd,
                     onPanStart: onPanStart,
@@ -143,12 +152,14 @@ class TaskList extends HookConsumerWidget {
   const TaskList(
     this.tasks, {
     this.onAddTask,
+    this.onTap,
     this.onMove,
     Key? key,
   }) : super(key: key);
 
   final List<Task> tasks;
   final Function()? onAddTask;
+  final Function(Task)? onTap;
   final Function(Task moved, Task? parent, int childPos)? onMove;
 
   @override
@@ -196,6 +207,7 @@ class TaskList extends HookConsumerWidget {
                     _RecTaskWidget(
                       t,
                       foldedMap: foldedMap,
+                      onTap: onTap,
                       onPanUpdate: (d, task) {
                         final scrollAdjust =
                             scrollOffset.value - scrollOffsetAtPanStart.value;

@@ -1,4 +1,5 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:rxdart/rxdart.dart';
 
 class User {
   final int userId;
@@ -17,9 +18,10 @@ abstract class UserService {
 }
 
 class DummyUserService extends UserService {
+  final BehaviorSubject<User?> _me = BehaviorSubject<User?>()
+    ..add(User(username: "Eidos", email: "imeidos@pm.me", userId: 1));
   @override
-  Stream<User?> get currentUser =>
-      Stream.value(User(username: "Eidos", email: "imeidos@pm.me", userId: 1));
+  Stream<User?> get currentUser => _me;
 }
 
 final Provider<UserService> userServiceProvider =
