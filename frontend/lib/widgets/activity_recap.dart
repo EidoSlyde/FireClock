@@ -50,9 +50,12 @@ class ActivityRecap extends HookConsumerWidget {
           alignment: Alignment.bottomCenter,
           children: [
             LayoutBuilder(
-                builder: ((context, constraints) => Container(
-                    color: Color.fromARGB(255, 70, 157, 238),
-                    height: constraints.maxHeight * ratio))),
+                builder: ((context, constraints) => AnimatedContainer(
+                    duration: const Duration(milliseconds: 160),
+                    color: ratio >= 1
+                        ? const Color(0xF624EB56)
+                        : const Color(0xFFCE65FF),
+                    height: constraints.maxHeight * ratio.clamp(0, 1)))),
             Column(
               children: [
                 const SizedBox(height: 16),
