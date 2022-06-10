@@ -16,13 +16,14 @@ export class TaskController {
   @Inject(TaskService)
   private readonly service: TaskService;
 
+  @Get('of_user/:user_id')
+  public getTasksOfUser(@Param('user_id', ParseIntPipe) user_id: number) {
+    return this.service.getTasksOfUser(user_id);
+  }
+
   @Get(':id')
   public getTask(@Param('id', ParseIntPipe) id: number): Promise<Task> {
     return this.service.getTask(id);
-  }
-
-  public getTasksOfUser(@Param('user_id', ParseIntPipe) user_id: number) {
-    return this.service.getTasksOfUser(user_id);
   }
 
   @Post()

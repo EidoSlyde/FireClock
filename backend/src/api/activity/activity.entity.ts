@@ -5,7 +5,7 @@ export class Activity {
   @PrimaryGeneratedColumn()
   public activity_id!: number;
 
-  @Column({ type: 'uuid' })
+  @Column({ type: 'int' })
   public task_id: number;
 
   @Column({ type: 'timestamp' })

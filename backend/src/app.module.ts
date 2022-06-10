@@ -28,7 +28,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
   providers: [AppService],
 })
 export class AppModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthMiddleware).forRoutes('');
-  }
+  // configure(consumer: MiddlewareConsumer) {
+  //   consumer.apply(AuthMiddleware).forRoutes('');
+  // }
 }

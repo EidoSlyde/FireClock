@@ -11,7 +11,7 @@ export class Quota {
   @PrimaryGeneratedColumn()
   public quota_id!: number;
 
-  @Column({ type: 'uuid' })
+  @Column({ type: 'int' })
   public task_id: number;
 
   @Column({ type: 'varchar', length: 120 })
