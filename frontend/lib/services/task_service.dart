@@ -12,6 +12,11 @@ abstract class TaskService {
     required int? newParentId,
     required int newChildrenIndex,
   });
+
+  Future<void> renameTask({required int taskId, required String newName});
+  Future<void> updateQuotaTimeUnit(
+      {required int taskId, required QuotaTimeUnit newQuotaTimeUnit});
+  Future<void> updateQuota({required int taskId, required int newQuota});
 }
 
 class DummyTaskService extends TaskService {
@@ -31,7 +36,11 @@ class DummyTaskService extends TaskService {
   Future<Task> createTask(
       {required int userId, required String taskName}) async {
     final rng = Random();
-    final task = Task(id: rng.nextInt(999999), name: taskName);
+    final task = Task(
+        id: rng.nextInt(999999),
+        name: taskName,
+        quota: 60,
+        quotaTimeUnit: QuotaTimeUnit.day);
     final userdb = _getOrCreateDb(userId);
     userdb.add([task, ...userdb.value]);
     return task;
@@ -75,11 +84,46 @@ class DummyTaskService extends TaskService {
       kv.value.add(kv.value.value
           .map((t2) => t2.filterMapRec((t) => t.id != newParentId
               ? t
-              : t.cloneWithChildren((xs) {
-                  final xs2 = [...xs];
+              : t.copyWith(children: () {
+                  final xs2 = [...t.children];
                   xs2.insert(newChildrenIndex, task!);
                   return xs2;
-                })))
+                }())))
+          .whereType<Task>()
+          .toList());
+    }
+  }
+
+  @override
+  Future<void> renameTask(
+      {required int taskId, required String newName}) async {
+    for (final kv in _db.entries) {
+      kv.value.add(kv.value.value
+          .map((t2) => t2.filterMapRec(
+              (t) => t.id != taskId ? t : t.copyWith(name: newName)))
+          .whereType<Task>()
+          .toList());
+    }
+  }
+
+  @override
+  Future<void> updateQuota({required int taskId, required int newQuota}) async {
+    for (final kv in _db.entries) {
+      kv.value.add(kv.value.value
+          .map((t2) => t2.filterMapRec(
+              (t) => t.id != taskId ? t : t.copyWith(quota: newQuota)))
+          .whereType<Task>()
+          .toList());
+    }
+  }
+
+  @override
+  Future<void> updateQuotaTimeUnit(
+      {required int taskId, required QuotaTimeUnit newQuotaTimeUnit}) async {
+    for (final kv in _db.entries) {
+      kv.value.add(kv.value.value
+          .map((t2) => t2.filterMapRec((t) =>
+              t.id != taskId ? t : t.copyWith(quotaTimeUnit: newQuotaTimeUnit)))
           .whereType<Task>()
           .toList());
     }

@@ -4,6 +4,7 @@ import 'package:fireclock/services/user_service.dart';
 import 'package:fireclock/task.dart';
 import 'package:fireclock/widgets/activity_recap.dart';
 import 'package:fireclock/widgets/task_widget.dart';
+import 'package:fireclock/widgets/task_top_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -46,8 +47,28 @@ class MainPage extends HookConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(width: 320, child: taskList),
-        if (selectedTask.value != null)
-          Expanded(child: ActivityRecapPanel(selectedTask.value!)),
+        Expanded(
+          child: Column(children: [
+            if (selectedTask.value != null)
+              TaskTopInfo(
+                key: ValueKey(selectedTask.value!.id),
+                task: selectedTask.value!,
+                onQuotaChange: (quota) => taskService.updateQuota(
+                    taskId: selectedTask.value!.id, newQuota: quota),
+                onQuotaTimeUnitChange: (quotaTimeUnit) =>
+                    taskService.updateQuotaTimeUnit(
+                        taskId: selectedTask.value!.id,
+                        newQuotaTimeUnit: quotaTimeUnit),
+                onNameChange: (name) => taskService.renameTask(
+                    taskId: selectedTask.value!.id, newName: name),
+              ),
+            if (selectedTask.value != null)
+              SizedBox(
+                height: 280,
+                child: ActivityRecapPanel(selectedTask.value!),
+              ),
+          ]),
+        )
       ],
     );
   }
@@ -75,7 +96,7 @@ class ActivityRecapPanel extends HookConsumerWidget {
               const SizedBox(width: 16),
               [
                 ActivityRecap(
-                    date: DateTime.now(), quota: 60 * 12, totalActivity: 650),
+                    date: DateTime.now(), quota: 60 * 12, totalActivity: 720),
                 ActivityRecap(
                     date: DateTime.now(), quota: 60 * 12, totalActivity: 420),
                 ActivityRecap(
