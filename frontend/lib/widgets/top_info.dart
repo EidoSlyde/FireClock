@@ -63,10 +63,11 @@ class TopInfo extends HookConsumerWidget {
           child: TextField(
             controller: textController,
             style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 32),
+            decoration: const InputDecoration(border: InputBorder.none),
           ),
         ),
         SizedBox(
-          width: 90,
+          width: 48,
           child: TextField(
             keyboardType: TextInputType.number,
             style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22),
@@ -74,6 +75,8 @@ class TopInfo extends HookConsumerWidget {
               FilteringTextInputFormatter.digitsOnly,
               LengthLimitingTextInputFormatter(2),
             ],
+            decoration: const InputDecoration(border: InputBorder.none),
+            textAlign: TextAlign.end,
             controller: quotaController,
           ),
         ),

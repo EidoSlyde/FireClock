@@ -41,7 +41,7 @@ class FireClockApp extends HookConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 300,
+            width: 320,
             child: TaskList(
               tasks.value,
               onMove: ((moved, parent, childPos) {
