@@ -39,6 +39,7 @@ class MainPage extends HookConsumerWidget {
         newParentId: p?.id,
         newChildrenIndex: i,
       ),
+      selected: selectedTask.value,
     );
 
     return Row(

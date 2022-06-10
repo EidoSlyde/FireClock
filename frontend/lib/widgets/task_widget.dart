@@ -26,6 +26,7 @@ class _TaskWidget extends StatelessWidget {
     this.onPanUpdate,
     this.onPanEnd,
     this.onPanStart,
+    this.selected = false,
     Key? key,
   }) : super(key: key);
 
@@ -36,6 +37,7 @@ class _TaskWidget extends StatelessWidget {
   final void Function(DragUpdateDetails)? onPanUpdate;
   final void Function()? onPanEnd;
   final void Function()? onPanStart;
+  final bool selected;
   final Color color;
 
   @override
@@ -45,7 +47,10 @@ class _TaskWidget extends StatelessWidget {
       child: Container(
         height: _taskHeight,
         width: double.infinity,
-        color: color,
+        decoration: BoxDecoration(
+          border: selected ? Border.all(width: 2.0) : null,
+          color: color,
+        ),
         child: Row(
           children: [
             GestureDetector(
@@ -85,6 +90,7 @@ class _RecTaskWidget extends HookConsumerWidget {
     this.onPanUpdate,
     this.onPanEnd,
     this.onPanStart,
+    this.selected,
     Key? key,
     this.depth = 0,
   }) : super(key: key);
@@ -96,6 +102,7 @@ class _RecTaskWidget extends HookConsumerWidget {
   final void Function()? onPanEnd;
   final void Function()? onPanStart;
   final int depth;
+  final Task? selected;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -122,6 +129,7 @@ class _RecTaskWidget extends HookConsumerWidget {
           onPanUpdate: (d) => onPanUpdate?.call(d, task),
           onPanEnd: onPanEnd,
           onPanStart: onPanStart,
+          selected: selected?.id == task.id,
         ),
         SizeTransition(
           sizeFactor: childrenSizeAnim,
@@ -133,6 +141,7 @@ class _RecTaskWidget extends HookConsumerWidget {
                   child: _RecTaskWidget(
                     key: ValueKey(e.id),
                     e,
+                    selected: selected,
                     depth: depth + 1,
                     foldedMap: foldedMap,
                     onTap: onTap,
@@ -155,6 +164,7 @@ class TaskList extends HookConsumerWidget {
     this.onAddTask,
     this.onTap,
     this.onMove,
+    this.selected,
     Key? key,
   }) : super(key: key);
 
@@ -162,6 +172,7 @@ class TaskList extends HookConsumerWidget {
   final Function()? onAddTask;
   final Function(Task)? onTap;
   final Function(Task moved, Task? parent, int childPos)? onMove;
+  final Task? selected;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -209,6 +220,7 @@ class TaskList extends HookConsumerWidget {
                       _RecTaskWidget(
                         key: ValueKey(t.id),
                         t,
+                        selected: selected,
                         foldedMap: foldedMap,
                         onTap: onTap,
                         onPanUpdate: (d, task) {
