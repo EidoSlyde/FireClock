@@ -21,6 +21,10 @@ export class TaskController {
     return this.service.getTask(id);
   }
 
+  public getTasksOfUser(@Param('user_id', ParseIntPipe) user_id: number) {
+    return this.service.getTasksOfUser(user_id);
+  }
+
   @Post()
   public createTask(@Body() body: CreateTaskDto): Promise<Task> {
     return this.service.createTask(body);

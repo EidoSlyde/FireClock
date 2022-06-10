@@ -13,6 +13,10 @@ export class TaskService {
     return this.repository.findOne({ where: { task_id: id } });
   }
 
+  public getTasksOfUser(user_id: number): Promise<Task[]> {
+    return this.repository.find({ where: { user_id } });
+  }
+
   public createTask(body: CreateTaskDto): Promise<Task> {
     const task: Task = new Task();
 
