@@ -4,6 +4,16 @@ class Task {
   final int id;
   final String name;
   final List<Task> children;
+
+  Task? filterMapRec(Task? Function(Task) f) {
+    final t = f(this);
+    if (t == null) return null;
+    return t.cloneWithChildren(
+        (xs) => xs.map((t2) => t2.filterMapRec(f)).whereType<Task>().toList());
+  }
+
+  Task cloneWithChildren(List<Task> Function(List<Task>) f) =>
+      Task(id: id, name: name, children: f(children));
 }
 
 final exampleTasks = [
