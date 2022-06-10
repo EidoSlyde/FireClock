@@ -42,6 +42,7 @@ class MainPage extends HookConsumerWidget {
     );
 
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(width: 320, child: taskList),
         if (selectedTask.value != null)
@@ -73,29 +74,17 @@ class ActivityRecapPanel extends HookConsumerWidget {
               const SizedBox(width: 16),
               [
                 ActivityRecap(
-                    date: DateTime.now(),
-                    quota: 60 * 12,
-                    totalActivity: 60 * 10),
+                    date: DateTime.now(), quota: 60 * 12, totalActivity: 650),
                 ActivityRecap(
-                    date: DateTime.now(),
-                    quota: 60 * 12,
-                    totalActivity: 60 * 10),
+                    date: DateTime.now(), quota: 60 * 12, totalActivity: 420),
                 ActivityRecap(
-                    date: DateTime.now(),
-                    quota: 60 * 12,
-                    totalActivity: 60 * 10),
+                    date: DateTime.now(), quota: 60 * 12, totalActivity: 263),
                 ActivityRecap(
-                    date: DateTime.now(),
-                    quota: 60 * 12,
-                    totalActivity: 60 * 10),
+                    date: DateTime.now(), quota: 60 * 12, totalActivity: 800),
                 ActivityRecap(
-                    date: DateTime.now(),
-                    quota: 60 * 12,
-                    totalActivity: 60 * 10),
+                    date: DateTime.now(), quota: 60 * 12, totalActivity: 900),
                 ActivityRecap(
-                    date: DateTime.now(),
-                    quota: 60 * 12,
-                    totalActivity: 60 * 10),
+                    date: DateTime.now(), quota: 60 * 12, totalActivity: 10000),
               ].map((e) => Padding(
                   padding: const EdgeInsets.symmetric(vertical: 24), child: e)),
             ),

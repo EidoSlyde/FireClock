@@ -11,36 +11,58 @@ class ActivityRecap extends HookConsumerWidget {
   }) : super(key: key);
 
   final DateTime date;
-  final double quota;
-  final double totalActivity;
+  final int quota;
+  final int totalActivity;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final dateFormat = DateFormat('dd/MM/yyyy');
-    const top = "05h";
-    const bottom = "10m";
 
-    const circleWidget = Center(
+    final mins = totalActivity;
+    final hours = mins ~/ 60;
+    final days = hours ~/ 24;
+
+    String top, bottom;
+    if (days == 0) {
+      top = '${(hours % 24).toString().padLeft(2, '0')}h';
+      bottom = '${(mins % 60).toString().padLeft(2, '0')}m';
+    } else {
+      top = '${days.toString().padLeft(2, '0')}d';
+      bottom = '${(hours % 24).toString().padLeft(2, '0')}h';
+    }
+
+    final circleWidget = Center(
       child: Text(
         '$top\n$bottom',
-        style: TextStyle(fontSize: 36, fontWeight: FontWeight.w900),
+        style: const TextStyle(fontSize: 36, fontWeight: FontWeight.w900),
       ),
     );
 
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+    final ratio = totalActivity / quota;
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
         color: Colors.white,
-      ),
-      width: 220,
-      height: double.infinity,
-      child: Column(
-        children: [
-          const SizedBox(height: 16),
-          Text(dateFormat.format(date)),
-          const SizedBox(height: 42),
-          circleWidget,
-        ],
+        width: 220,
+        height: double.infinity,
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            LayoutBuilder(
+                builder: ((context, constraints) => Container(
+                    color: Color.fromARGB(255, 70, 157, 238),
+                    height: constraints.maxHeight * ratio))),
+            Column(
+              children: [
+                const SizedBox(height: 16),
+                Text(dateFormat.format(date)),
+                const SizedBox(height: 42),
+                circleWidget,
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

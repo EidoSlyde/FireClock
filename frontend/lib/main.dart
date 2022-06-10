@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -14,6 +15,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ProviderScope(
       child: MaterialApp(
+        scrollBehavior: const ScrollBehavior().copyWith(
+          overscroll: false,
+          dragDevices: {
+            PointerDeviceKind.mouse,
+            PointerDeviceKind.touch,
+            PointerDeviceKind.trackpad,
+          },
+        ),
         title: 'FireClock',
         theme: ThemeData(
           primarySwatch: Colors.blue,
