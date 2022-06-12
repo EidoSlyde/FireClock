@@ -87,6 +87,8 @@ class ActivityPanel extends ConsumerWidget {
                     onConfirm: (dt) {
                       onStartChange?.call(activity.id, dt);
                     },
+                    currentTime: activity.range.start,
+                    maxTime: activity.range.end,
                   );
                 },
                 child: MouseRegion(
@@ -110,6 +112,8 @@ class ActivityPanel extends ConsumerWidget {
                     onConfirm: (dt) {
                       onEndChange?.call(activity.id, dt);
                     },
+                    currentTime: activity.range.end,
+                    minTime: activity.range.start,
                   );
                 },
                 child: MouseRegion(
