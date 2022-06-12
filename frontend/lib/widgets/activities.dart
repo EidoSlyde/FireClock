@@ -71,7 +71,9 @@ class ActivityPanel extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 16),
-        for (final activity in activities)
+        for (final activity in [
+          ...activities
+        ]..sort((a, b) => b.range.start.compareTo(a.range.start)))
           Padding(
             padding: const EdgeInsets.symmetric(
               vertical: 6,
@@ -90,7 +92,8 @@ class ActivityPanel extends ConsumerWidget {
                 child: MouseRegion(
                   cursor: SystemMouseCursors.click,
                   child: Column(children: [
-                    Text(dateFormat.format(activity.range.start)),
+                    Text(dateFormat.format(activity.range.start),
+                        style: const TextStyle(color: Colors.grey)),
                     Text(timeFormat.format(activity.range.start),
                         style: const TextStyle(
                             fontWeight: FontWeight.w900,
@@ -112,7 +115,8 @@ class ActivityPanel extends ConsumerWidget {
                 child: MouseRegion(
                   cursor: SystemMouseCursors.click,
                   child: Column(children: [
-                    Text(dateFormat.format(activity.range.end)),
+                    Text(dateFormat.format(activity.range.end),
+                        style: const TextStyle(color: Colors.grey)),
                     Text(timeFormat.format(activity.range.end),
                         style: const TextStyle(
                             fontWeight: FontWeight.w900,

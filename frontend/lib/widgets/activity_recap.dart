@@ -84,7 +84,55 @@ class ActivityRecapPanel extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final activityService = ref.read(activityServiceProvider);
-    final activities = useStream(activityService.activitiesOfTask(selected.id));
+    final activities = useStream(useMemoized(
+            () => activityService.activitiesOfTask(selected.id),
+            [selected.id])).data ??
+        [];
+    final oldestActivity = activities.isEmpty
+        ? null
+        : activities.reduce((curr, next) =>
+            curr.range.start.compareTo(next.range.start) < 0 ? curr : next);
+
+    final now = DateTime.now();
+    var intervalVar = DateTime(
+        now.year,
+        now.month,
+        selected.quotaTimeUnit == QuotaTimeUnit.day
+            ? now.day
+            : selected.quotaTimeUnit == QuotaTimeUnit.week
+                ? now.day - now.weekday + 1
+                : 1);
+
+    DateTime intervalEnd(DateTime start) =>
+        selected.quotaTimeUnit == QuotaTimeUnit.day
+            ? start.add(const Duration(days: 1))
+            : selected.quotaTimeUnit == QuotaTimeUnit.week
+                ? start.add(const Duration(days: 7))
+                : DateTime(start.year, start.month + 1, 1);
+
+    var xs = {intervalVar: const Duration()};
+    while (oldestActivity != null &&
+        intervalVar.isAfter(oldestActivity.range.start)) {
+      intervalVar = selected.quotaTimeUnit == QuotaTimeUnit.day
+          ? intervalVar.subtract(const Duration(days: 1))
+          : selected.quotaTimeUnit == QuotaTimeUnit.week
+              ? intervalVar.subtract(const Duration(days: 7))
+              : DateTime(intervalVar.year, intervalVar.month - 1, 1);
+      xs[intervalVar] = const Duration();
+    }
+
+    for (final activity in activities) {
+      final aStart = activity.range.start;
+      final aEnd = activity.range.end;
+      for (final itvStart in xs.keys) {
+        final itvEnd = intervalEnd(itvStart);
+        final overlapStart = aStart.isAfter(itvStart) ? aStart : itvStart;
+        final overlapEnd = aEnd.isBefore(itvEnd) ? aEnd : itvEnd;
+        if (overlapEnd.isBefore(overlapStart)) continue;
+        xs[itvStart] = xs[itvStart]! + overlapEnd.difference(overlapStart);
+      }
+    }
+
     return Container(
       color: const Color(0xFF343434),
       height: 280,
@@ -97,30 +145,12 @@ class ActivityRecapPanel extends HookConsumerWidget {
             ...intersperse(
               const SizedBox(width: 16),
               [
-                ActivityRecap(
-                    date: DateTime.now(),
+                for (final itvStart in xs.keys)
+                  ActivityRecap(
+                    date: itvStart,
                     quota: selected.quota,
-                    totalActivity: 720),
-                ActivityRecap(
-                    date: DateTime.now(),
-                    quota: selected.quota,
-                    totalActivity: 420),
-                ActivityRecap(
-                    date: DateTime.now(),
-                    quota: selected.quota,
-                    totalActivity: 263),
-                ActivityRecap(
-                    date: DateTime.now(),
-                    quota: selected.quota,
-                    totalActivity: 800),
-                ActivityRecap(
-                    date: DateTime.now(),
-                    quota: selected.quota,
-                    totalActivity: 900),
-                ActivityRecap(
-                    date: DateTime.now(),
-                    quota: selected.quota,
-                    totalActivity: 10000),
+                    totalActivity: xs[itvStart]!.inMinutes,
+                  ),
               ].map((e) => Padding(
                   padding: const EdgeInsets.symmetric(vertical: 24), child: e)),
             ),
