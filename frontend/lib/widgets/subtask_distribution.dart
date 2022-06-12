@@ -34,6 +34,9 @@ class SubTaskDistribution extends HookConsumerWidget {
           [selectedTask, ...selectedTask.children]
               .map((t) => t.copyWith(name: () {
                     counts[t.name] = (counts[t.name] ?? -1) + 1;
+                    if (t.id == selectedTask.id) {
+                      return "${t.name} (no subtask)";
+                    }
                     if (counts[t.name] == 0) return t.name;
                     return "${t.name} (${counts[t.name]})";
                   }()))
