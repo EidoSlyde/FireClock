@@ -8,6 +8,14 @@ class ActivityData {
   final DateTimeRange range;
 
   ActivityData(this.id, this.range);
+
+  // Returns null when not overlapping
+  DateTimeRange? overlapping(DateTimeRange dtr) {
+    final overlapStart = (range.start.isAfter(dtr.start) ? range : dtr).start;
+    final overlapEnd = (range.end.isBefore(dtr.end) ? range : dtr).end;
+    if (overlapEnd.isBefore(overlapStart)) return null;
+    return DateTimeRange(start: overlapStart, end: overlapEnd);
+  }
 }
 
 class ActivityPanel extends ConsumerWidget {

@@ -4,6 +4,7 @@ import 'package:fireclock/services/user_service.dart';
 import 'package:fireclock/task.dart';
 import 'package:fireclock/widgets/activities.dart';
 import 'package:fireclock/widgets/activity_recap.dart';
+import 'package:fireclock/widgets/subtask_distribution.dart';
 import 'package:fireclock/widgets/task_widget.dart';
 import 'package:fireclock/widgets/task_top_info.dart';
 import 'package:flutter/material.dart';
@@ -106,7 +107,11 @@ class MainPage extends HookConsumerWidget {
                               activityService.updateRange(aid, null, dtr),
                         ),
                       ),
-                      Expanded(child: Container()),
+                      Expanded(
+                        child: SubTaskDistribution(
+                            activities: activities,
+                            selectedTask: selectedTask.value!),
+                      ),
                     ],
                   ),
                 ),

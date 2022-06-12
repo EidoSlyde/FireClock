@@ -137,7 +137,6 @@ class DummyTaskService extends TaskService {
       Task? task;
       kv.value.value
           .map((t2) => t2.filterMapRec((t) {
-                print({t.id, taskId});
                 if (t.id == taskId) task = t;
                 return t;
               }))

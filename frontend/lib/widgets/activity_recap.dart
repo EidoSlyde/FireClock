@@ -122,14 +122,11 @@ class ActivityRecapPanel extends HookConsumerWidget {
     }
 
     for (final activity in activities) {
-      final aStart = activity.range.start;
-      final aEnd = activity.range.end;
       for (final itvStart in xs.keys) {
-        final itvEnd = intervalEnd(itvStart);
-        final overlapStart = aStart.isAfter(itvStart) ? aStart : itvStart;
-        final overlapEnd = aEnd.isBefore(itvEnd) ? aEnd : itvEnd;
-        if (overlapEnd.isBefore(overlapStart)) continue;
-        xs[itvStart] = xs[itvStart]! + overlapEnd.difference(overlapStart);
+        final range =
+            DateTimeRange(start: itvStart, end: intervalEnd(itvStart));
+        xs[itvStart] = xs[itvStart]! +
+            (activity.overlapping(range)?.duration ?? const Duration());
       }
     }
 
