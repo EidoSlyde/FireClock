@@ -21,6 +21,13 @@ export class ActivityController {
     return this.service.getActivity(id);
   }
 
+  @Get(':bytask_id')
+  public getActivitiesOfTask(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<Activity[]> {
+    return this.service.getActivitiesOfTask(id);
+  }
+
   @Post()
   public createActivity(@Body() body: CreateActivityDto): Promise<Activity> {
     return this.service.createActivity(body);

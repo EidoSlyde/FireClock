@@ -6,6 +6,9 @@ import { Activity } from './activity.entity';
 
 @Injectable()
 export class ActivityService {
+  getActivitiesOfTask(id: number): Promise<Activity[]> {
+    return this.repository.find({ where: { task_id: id } });
+  }
   @InjectRepository(Activity)
   private readonly repository: Repository<Activity>;
 
