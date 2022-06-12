@@ -2,13 +2,13 @@ import 'package:fireclock/services/activity_service.dart';
 import 'package:fireclock/services/task_service.dart';
 import 'package:fireclock/services/user_service.dart';
 import 'package:fireclock/task.dart';
+import 'package:fireclock/widgets/activities.dart';
 import 'package:fireclock/widgets/activity_recap.dart';
 import 'package:fireclock/widgets/task_widget.dart';
 import 'package:fireclock/widgets/task_top_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intersperse/intersperse.dart';
 
 class MainPage extends HookConsumerWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -35,6 +35,17 @@ class MainPage extends HookConsumerWidget {
           .then((t) => selectedTask.value = t);
       return null;
     }, [tasks]);
+
+    final activityService = ref.read(activityServiceProvider);
+    final activitiesSnapshot = useStream(
+      useMemoized(
+          () => selectedTask.value == null
+              ? Stream.value(null)
+              : activityService.activitiesOfTask(selectedTask.value!.id),
+          [selectedTask.value]),
+    );
+    final activities = activitiesSnapshot.data ?? [];
+
     final taskList = TaskList(
       tasks,
       onTap: (t) => selectedTask.value = selectedTask.value == t ? null : t,
@@ -77,6 +88,24 @@ class MainPage extends HookConsumerWidget {
                 height: 280,
                 child: ActivityRecapPanel(selectedTask.value!),
               ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 18),
+              child: Row(
+                children: [
+                  ActivityPanel(
+                    activities: activities,
+                    onCreate: (dtr) => activityService.createActivity(
+                        selectedTask.value!.id, dtr),
+                    onDelete: (aid) => activityService.deleteActivity(aid),
+                    onStartChange: (aid, dtr) =>
+                        activityService.updateRange(aid, dtr, null),
+                    onEndChange: (aid, dtr) =>
+                        activityService.updateRange(aid, null, dtr),
+                  ),
+                  Expanded(child: Container()),
+                ],
+              ),
+            ),
           ]),
         )
       ],

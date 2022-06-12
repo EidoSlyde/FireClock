@@ -30,18 +30,26 @@ class ActivityPanel extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     Widget row(Widget start, Widget end, Widget delete) => Row(
           children: [
-            SizedBox(width: 172, child: start),
+            start,
+            Container(
+                width: 64,
+                transform: Matrix4.identity()..translate(0.0, 7.0),
+                child: const Icon(Icons.arrow_right_alt, size: 42)),
             end,
-            const Spacer(),
-            delete,
+            Container(
+                width: 64,
+                transform: Matrix4.identity()..translate(0.0, 8.0),
+                child: delete),
           ],
         );
 
-    final dateFormat = DateFormat('dd/MM/yyyy hh:mm');
+    final dateFormat = DateFormat('dd/MM/yyyy');
+    final timeFormat = DateFormat('HH:mm');
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const SizedBox(height: 16),
         Row(
           children: [
             const Text(
@@ -51,7 +59,7 @@ class ActivityPanel extends ConsumerWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const Spacer(),
+            const SizedBox(width: 142),
             GestureDetector(
                 child: const MouseRegion(
                   cursor: SystemMouseCursors.click,
@@ -62,54 +70,56 @@ class ActivityPanel extends ConsumerWidget {
                     end: DateTime.now().add(const Duration(hours: 1))))),
           ],
         ),
-        const SizedBox(height: 24),
-        row(const Text("Start"), const Text("End"), Container()),
         const SizedBox(height: 16),
         for (final activity in activities)
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 3),
+            padding: const EdgeInsets.symmetric(
+              vertical: 6,
+            ),
             child: row(
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      DatePicker.showDateTimePicker(
-                        context,
-                        showTitleActions: true,
-                        onConfirm: (dt) {
-                          onStartChange?.call(activity.id, dt);
-                        },
-                      );
+              GestureDetector(
+                onTap: () {
+                  DatePicker.showDateTimePicker(
+                    context,
+                    showTitleActions: true,
+                    onConfirm: (dt) {
+                      onStartChange?.call(activity.id, dt);
                     },
-                    child: MouseRegion(
-                      cursor: SystemMouseCursors.click,
-                      child: Text(dateFormat.format(activity.range.start)),
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  const Icon(Icons.edit, size: 12),
-                ],
+                  );
+                },
+                child: MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: Column(children: [
+                    Text(dateFormat.format(activity.range.start)),
+                    Text(timeFormat.format(activity.range.start),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 28,
+                            height: 1)),
+                  ]),
+                ),
               ),
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      DatePicker.showDateTimePicker(
-                        context,
-                        showTitleActions: true,
-                        onConfirm: (dt) {
-                          onEndChange?.call(activity.id, dt);
-                        },
-                      );
+              GestureDetector(
+                onTap: () {
+                  DatePicker.showDateTimePicker(
+                    context,
+                    showTitleActions: true,
+                    onConfirm: (dt) {
+                      onEndChange?.call(activity.id, dt);
                     },
-                    child: MouseRegion(
-                      cursor: SystemMouseCursors.click,
-                      child: Text(dateFormat.format(activity.range.end)),
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  const Icon(Icons.edit, size: 12),
-                ],
+                  );
+                },
+                child: MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: Column(children: [
+                    Text(dateFormat.format(activity.range.end)),
+                    Text(timeFormat.format(activity.range.end),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 28,
+                            height: 1)),
+                  ]),
+                ),
               ),
               GestureDetector(
                   child: const MouseRegion(
