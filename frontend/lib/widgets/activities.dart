@@ -30,12 +30,16 @@ class ActivityPanel extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     Widget row(Widget start, Widget end, Widget delete) => Row(
           children: [
-            start,
+            SizedBox(
+                width: 82,
+                child: Align(alignment: Alignment.centerLeft, child: start)),
             Container(
                 width: 64,
-                transform: Matrix4.identity()..translate(0.0, 7.0),
+                transform: Matrix4.identity()..translate(-2.0, 7.0),
                 child: const Icon(Icons.arrow_right_alt, size: 42)),
-            end,
+            SizedBox(
+                width: 82,
+                child: Align(alignment: Alignment.centerLeft, child: end)),
             Container(
                 width: 64,
                 transform: Matrix4.identity()..translate(0.0, 8.0),
@@ -46,8 +50,8 @@ class ActivityPanel extends ConsumerWidget {
     final dateFormat = DateFormat('dd/MM/yyyy');
     final timeFormat = DateFormat('HH:mm');
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return ListView(
+      primary: false,
       children: [
         const SizedBox(height: 16),
         Row(
@@ -59,7 +63,7 @@ class ActivityPanel extends ConsumerWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(width: 142),
+            const SizedBox(width: 160),
             GestureDetector(
                 child: const MouseRegion(
                   cursor: SystemMouseCursors.click,

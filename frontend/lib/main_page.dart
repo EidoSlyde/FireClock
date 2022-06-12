@@ -65,9 +65,9 @@ class MainPage extends HookConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(width: 320, child: taskList),
-        Expanded(
-          child: Column(children: [
-            if (selectedTask.value != null)
+        if (selectedTask.value != null)
+          Expanded(
+            child: Column(children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 18),
                 child: TaskTopInfo(
@@ -83,31 +83,36 @@ class MainPage extends HookConsumerWidget {
                       taskId: selectedTask.value!.id, newName: name),
                 ),
               ),
-            if (selectedTask.value != null)
               SizedBox(
                 height: 280,
                 child: ActivityRecapPanel(selectedTask.value!),
               ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18),
-              child: Row(
-                children: [
-                  ActivityPanel(
-                    activities: activities,
-                    onCreate: (dtr) => activityService.createActivity(
-                        selectedTask.value!.id, dtr),
-                    onDelete: (aid) => activityService.deleteActivity(aid),
-                    onStartChange: (aid, dtr) =>
-                        activityService.updateRange(aid, dtr, null),
-                    onEndChange: (aid, dtr) =>
-                        activityService.updateRange(aid, null, dtr),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 18),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 292,
+                        child: ActivityPanel(
+                          activities: activities,
+                          onCreate: (dtr) => activityService.createActivity(
+                              selectedTask.value!.id, dtr),
+                          onDelete: (aid) =>
+                              activityService.deleteActivity(aid),
+                          onStartChange: (aid, dtr) =>
+                              activityService.updateRange(aid, dtr, null),
+                          onEndChange: (aid, dtr) =>
+                              activityService.updateRange(aid, null, dtr),
+                        ),
+                      ),
+                      Expanded(child: Container()),
+                    ],
                   ),
-                  Expanded(child: Container()),
-                ],
+                ),
               ),
-            ),
-          ]),
-        )
+            ]),
+          )
       ],
     );
   }
