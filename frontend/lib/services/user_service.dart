@@ -1,3 +1,4 @@
+import 'package:fireclock/services/http/http_user_service.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -23,7 +24,7 @@ class User {
 
 abstract class UserService {
   abstract final Stream<User?> currentUser;
-  Future<void> login(String user, String password);
+  Future<User> login(String user, String password);
   Future<void> logout();
   Future<void> register(String username, String email, String password);
 }
@@ -35,7 +36,8 @@ class DummyUserService extends UserService {
   Stream<User?> get currentUser => _me;
 
   @override
-  Future<void> login(String user, String password) async {}
+  Future<User> login(String user, String password) async =>
+      (await currentUser.first)!;
 
   @override
   Future<void> logout() async {}
@@ -45,4 +47,4 @@ class DummyUserService extends UserService {
 }
 
 final Provider<UserService> userServiceProvider =
-    Provider((ref) => DummyUserService());
+    Provider((ref) => HttpUserService());

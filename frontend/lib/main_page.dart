@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import 'login_page.dart';
+
 class MainPage extends HookConsumerWidget {
   const MainPage({Key? key}) : super(key: key);
   @override
@@ -20,7 +22,7 @@ class MainPage extends HookConsumerWidget {
     final userService = ref.read(userServiceProvider);
     final userSnapshot = useStream(userService.currentUser);
     if (!userSnapshot.hasData) {
-      return const Text("Not connected");
+      return const LoginPage();
     }
     final user = userSnapshot.data!;
 

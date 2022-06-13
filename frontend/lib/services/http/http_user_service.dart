@@ -15,7 +15,9 @@ class HttpUserService extends UserService {
   Future<User> login(String user, String password) async {
     final res = await http.post(Uri.parse("$apiUrl/user/login"),
         body: {"username": user, "password": password});
-    if (res.statusCode == 400) throw Exception(jsonDecode(res.body)['message']);
+    if (res.statusCode == 400) {
+      throw FormatException(jsonDecode(res.body)['message']);
+    }
     final u = User.fromJSON(jsonDecode(res.body));
     _curr.add(u);
     return u;
@@ -28,11 +30,18 @@ class HttpUserService extends UserService {
 
   @override
   Future<User> register(String username, String email, String password) async {
+    if (username == "") throw const FormatException("Empty username");
+    if (password == "") throw const FormatException("Empty password");
+    if (email == "") throw const FormatException("Empty email");
+
     final res = await http.post(Uri.parse("$apiUrl/user"), body: {
       "username": username,
       "email": email,
       "password": password,
     });
+    if (res.statusCode != 201) {
+      throw FormatException(jsonDecode(res.body)['message']);
+    }
     final u = User.fromJSON(jsonDecode(res.body));
     _curr.add(u);
     return u;
