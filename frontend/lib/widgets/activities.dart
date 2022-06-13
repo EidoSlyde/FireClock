@@ -16,6 +16,14 @@ class ActivityData {
     if (overlapEnd.isBefore(overlapStart)) return null;
     return DateTimeRange(start: overlapStart, end: overlapEnd);
   }
+
+  static ActivityData fromJSON(dynamic json) {
+    return ActivityData(
+        json['activity_id'],
+        DateTimeRange(
+            start: DateTime.parse(json["start_date"]),
+            end: DateTime.parse(json["end_date"])));
+  }
 }
 
 class ActivityPanel extends ConsumerWidget {

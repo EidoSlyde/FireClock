@@ -1,13 +1,15 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Inject,
   Param,
   ParseIntPipe,
   Post,
+  Put,
 } from '@nestjs/common';
-import { CreateActivityDto } from './activity.dto';
+import { CreateActivityDto, UpdateActivityDto } from './activity.dto';
 import { Activity } from './activity.entity';
 import { ActivityService } from './activity.service';
 
@@ -21,7 +23,7 @@ export class ActivityController {
     return this.service.getActivity(id);
   }
 
-  @Get(':bytask_id')
+  @Get('bytask/:id')
   public getActivitiesOfTask(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<Activity[]> {
@@ -33,37 +35,37 @@ export class ActivityController {
     return this.service.createActivity(body);
   }
 
-  @Post()
+  @Put(':id')
   public updateActivity(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: CreateActivityDto,
+    @Body() body: UpdateActivityDto,
   ): Promise<Activity> {
     return this.service.updateActivity(id, body);
   }
 
-  @Post()
+  @Delete(':id')
   public deleteActivity(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<Activity> {
     return this.service.deleteActivity(id);
   }
 
-  @Post()
-  public getActivityTotalTime(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<Activity> {
-    return this.service.getActivityTotalTime(id);
-  }
+  // @Post()
+  // public getActivityTotalTime(
+  //   @Param('id', ParseIntPipe) id: number,
+  // ): Promise<Activity> {
+  //   return this.service.getActivityTotalTime(id);
+  // }
 
-  @Post()
-  public getActivityTotalTimeInInterval(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() body: any,
-  ): Promise<number> {
-    return this.service.getActivityTotalTimeInInterval(
-      id,
-      body.start,
-      body.end,
-    );
-  }
+  // @Post()
+  // public getActivityTotalTimeInInterval(
+  //   @Param('id', ParseIntPipe) id: number,
+  //   @Body() body: any,
+  // ): Promise<number> {
+  //   return this.service.getActivityTotalTimeInInterval(
+  //     id,
+  //     body.start,
+  //     body.end,
+  //   );
+  // }
 }

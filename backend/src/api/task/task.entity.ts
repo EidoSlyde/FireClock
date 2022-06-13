@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  TreeParent,
 } from 'typeorm';
 
 @Entity()

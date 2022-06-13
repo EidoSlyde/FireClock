@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateActivityDto } from './activity.dto';
+import { CreateActivityDto, UpdateActivityDto } from './activity.dto';
 import { Activity } from './activity.entity';
 
 @Injectable()
@@ -37,21 +37,24 @@ export class ActivityService {
 
     activity.task_id = body.task_id;
     activity.start_date = body.start_date;
-    activity.duration = body.duration;
+    activity.end_date = body.end_date;
 
     return this.repository.save(activity);
   }
 
-  public updateActivity(
+  public async updateActivity(
     id: number,
-    body: CreateActivityDto,
+    body: UpdateActivityDto,
   ): Promise<Activity> {
-    const activity: Activity = new Activity();
+    const activity: Activity = await this.repository.findOne({
+      where: { activity_id: id },
+    });
 
-    activity.activity_id = id;
-    activity.task_id = body.task_id;
-    activity.start_date = body.start_date;
-    activity.duration = body.duration;
+    if (!!body.task_id) activity.task_id = body.task_id;
+    if (!!body.start_date) activity.start_date = body.start_date;
+    if (!!body.end_date) activity.end_date = body.end_date;
+
+    console.log(body);
 
     return this.repository.save(activity);
   }

@@ -4,7 +4,6 @@ import 'package:fireclock/services/task_service.dart';
 import 'package:fireclock/task.dart';
 import 'package:http/http.dart' as http;
 import 'package:rxdart/rxdart.dart';
-import 'package:tuple/tuple.dart';
 
 import 'http_settings.dart';
 

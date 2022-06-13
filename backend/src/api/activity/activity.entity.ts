@@ -11,8 +11,8 @@ export class Activity {
   @Column({ type: 'timestamp' })
   public start_date: Date;
 
-  @Column({ type: 'varchar', length: 120 })
-  public duration: string;
+  @Column({ type: 'timestamp' })
+  public end_date: Date;
 
   @Column({ type: 'boolean', default: false })
   public isDeleted: boolean;
