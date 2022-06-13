@@ -84,13 +84,17 @@ class ActivityRecapPanel extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final activityService = ref.read(activityServiceProvider);
-    final activities = useStream(useMemoized(
+    final activitiesNoRec = useStream(useMemoized(
             () => activityService.activitiesOfTask(selected.id),
-            [selected.id])).data ??
+            [selected])).data ??
         [];
-    final oldestActivity = activities.isEmpty
+    final activitiesRec = useFuture(useMemoized(
+            () => activityService.recursiveActivitiesOfTaskSum(selected.id),
+            [selected, activitiesNoRec])).data ??
+        [];
+    final oldestActivity = activitiesRec.isEmpty
         ? null
-        : activities.reduce((curr, next) =>
+        : activitiesRec.reduce((curr, next) =>
             curr.range.start.compareTo(next.range.start) < 0 ? curr : next);
 
     final now = DateTime.now();
@@ -121,7 +125,7 @@ class ActivityRecapPanel extends HookConsumerWidget {
       xs[intervalVar] = const Duration();
     }
 
-    for (final activity in activities) {
+    for (final activity in activitiesRec) {
       for (final itvStart in xs.keys) {
         final range =
             DateTimeRange(start: itvStart, end: intervalEnd(itvStart));

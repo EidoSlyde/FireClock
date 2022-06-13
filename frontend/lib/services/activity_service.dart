@@ -11,6 +11,7 @@ import '../task.dart';
 
 abstract class ActivityService {
   Stream<List<ActivityData>> activitiesOfTask(int taskId);
+  Future<List<ActivityData>> recursiveActivitiesOfTaskSum(int taskId);
   Future<ActivityData> createActivity(int taskId, DateTimeRange range);
   Future<void> deleteActivity(int activityId);
   Future<void> updateRange(int activityId, DateTime? start, DateTime? end);
@@ -95,6 +96,17 @@ class DummyActivityService extends ActivityService {
       map[keys[i]] = vals[i];
     }
     return map;
+  }
+
+  @override
+  Future<List<ActivityData>> recursiveActivitiesOfTaskSum(int taskId) async {
+    final self = await activitiesOfTask(taskId).first;
+
+    final task = await taskService.getById(taskId);
+    final children = await Future.wait(
+        task.children.map((e) => recursiveActivitiesOfTaskSum(e.id)));
+
+    return [...self, ...children.expand((e) => e)];
   }
 }
 
