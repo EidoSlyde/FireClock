@@ -29,6 +29,8 @@ export class Task {
   @Column({ type: 'boolean', default: false })
   public isDeleted: boolean;
 
+  public children: Task[] = [];
+
   /*
    * Create and Update Date Columns
    */

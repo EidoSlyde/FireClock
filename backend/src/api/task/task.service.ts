@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { CreateTaskDto, UpdateTaskDto } from './task.dto';
 import { Task } from './task.entity';
 
@@ -9,12 +9,20 @@ export class TaskService {
   @InjectRepository(Task)
   private readonly repository: Repository<Task>;
 
-  public getTask(id: number): Promise<Task> {
-    return this.repository.findOne({ where: { task_id: id } });
+  public async getTask(id: number): Promise<Task> {
+    const children = await this.repository.find({ where: { parent: id } });
+    const t = await this.repository.findOne({ where: { task_id: id } });
+    t.children = await Promise.all(
+      children.map((c) => this.getTask(c.task_id)),
+    );
+    return t;
   }
 
-  public getTasksOfUser(user_id: number): Promise<Task[]> {
-    return this.repository.find({ where: { user_id } });
+  public async getTasksOfUser(user_id: number): Promise<Task[]> {
+    const ts = await this.repository.find({
+      where: { user_id, parent: IsNull() },
+    });
+    return Promise.all(ts.map((t) => this.getTask(t.task_id)));
   }
 
   public createTask(body: CreateTaskDto): Promise<Task> {

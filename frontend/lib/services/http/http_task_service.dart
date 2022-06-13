@@ -43,20 +43,7 @@ class HttpTaskService extends TaskService {
     final res = await http.get(Uri.parse('$apiUrl/task/of_user/$userId'));
     final jsonList = json.decode(res.body) as List<dynamic>;
 
-    final xs = <int, Tuple2<Task, int?>>{};
-    for (final json in jsonList) {
-      final task = Task.fromJSON(json);
-      xs[task.id] = Tuple2(task, json["parent"]);
-    }
-    for (final taskId in xs.keys) {
-      final parentId = xs[taskId]!.item2;
-      final task = xs[taskId]!.item1;
-      if (parentId == null) continue;
-      final p = xs[parentId]!.item1;
-      p.children.add(task);
-    }
-    final tasks =
-        xs.values.where((t) => t.item2 == null).map((t) => t.item1).toList();
+    final tasks = [for (final json in jsonList) Task.fromJSON(json)];
 
     yield tasks;
     await _events.first;
