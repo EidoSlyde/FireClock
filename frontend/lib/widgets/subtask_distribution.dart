@@ -29,16 +29,16 @@ class SubTaskDistribution extends HookConsumerWidget {
         {};
     final data = useState(<String, double>{"": 0});
     useEffect(() {
-      final counts = <String, int>{};
+      final counts = <String, Set<int>>{};
       data.value = map.map((k, v) => MapEntry(
           [selectedTask, ...selectedTask.children]
               .map((t) => t.copyWith(name: () {
-                    counts[t.name] = (counts[t.name] ?? -1) + 1;
+                    counts[t.name] = {...(counts[t.name] ?? {}), t.id};
                     if (t.id == selectedTask.id) {
                       return "${t.name} (no subtask)";
                     }
-                    if (counts[t.name] == 0) return t.name;
-                    return "${t.name} (${counts[t.name]})";
+                    if (counts[t.name]!.length <= 1) return t.name;
+                    return "${t.name} (${counts[t.name]!.length - 1})";
                   }()))
               .firstWhere((t) => t.id == k)
               .name,
