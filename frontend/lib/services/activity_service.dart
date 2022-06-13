@@ -16,6 +16,7 @@ abstract class ActivityService {
   ActivityService(this.taskService);
 
   Stream<List<ActivityData>> activitiesOfTask(int taskId);
+  Future<List<ActivityData>> activitiesOfTaskFuture(int taskId);
   Future<ActivityData> createActivity(int taskId, DateTimeRange range);
   Future<void> deleteActivity(int activityId);
   Future<void> updateRange(int activityId, DateTime? start, DateTime? end);
@@ -34,7 +35,8 @@ abstract class ActivityService {
         vals.add(0);
       }
 
-      final activities = await activitiesOfTask(t.value.id).first;
+      final activities = await activitiesOfTaskFuture(t.value.id);
+      print(activities);
 
       for (final a in activities) {
         vals[vals.length - 1] =
@@ -50,7 +52,7 @@ abstract class ActivityService {
   }
 
   Future<List<ActivityData>> recursiveActivitiesOfTaskSum(int taskId) async {
-    final self = await activitiesOfTask(taskId).first;
+    final self = await activitiesOfTaskFuture(taskId);
 
     final task = await taskService.getById(taskId);
     final children = await Future.wait(
@@ -106,6 +108,10 @@ class DummyActivityService extends ActivityService {
             end: end ?? activity.range.end));
     s.add(s.value.map((s) => s == activity ? newActivity : s).toList());
   }
+
+  @override
+  Future<List<ActivityData>> activitiesOfTaskFuture(int taskId) =>
+      _getOrCreateDb(taskId).first;
 }
 
 final activityServiceProvider =

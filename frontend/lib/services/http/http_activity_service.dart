@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:fireclock/services/activity_service.dart';
 import 'package:fireclock/services/http/http_settings.dart';
@@ -16,11 +17,15 @@ class HttpActivityService extends ActivityService {
 
   @override
   Stream<List<ActivityData>> activitiesOfTask(int taskId) async* {
-    final res = await http.get(Uri.parse("$apiUrl/activity/bytask/$taskId"));
-
-    yield [for (final j in json.decode(res.body)) ActivityData.fromJSON(j)];
+    yield await activitiesOfTaskFuture(taskId);
     await _events.first;
     yield* activitiesOfTask(taskId);
+  }
+
+  @override
+  Future<List<ActivityData>> activitiesOfTaskFuture(int taskId) async {
+    final res = await http.get(Uri.parse("$apiUrl/activity/bytask/$taskId"));
+    return [for (final j in json.decode(res.body)) ActivityData.fromJSON(j)];
   }
 
   @override
