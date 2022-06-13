@@ -53,8 +53,7 @@ class HttpTaskService extends TaskService {
       final task = xs[taskId]!.item1;
       if (parentId == null) continue;
       final p = xs[parentId]!.item1;
-      xs[parentId] =
-          xs[parentId]!.withItem1(p.copyWith(children: [...p.children, task]));
+      p.children.add(task);
     }
     final tasks =
         xs.values.where((t) => t.item2 == null).map((t) => t.item1).toList();
@@ -76,7 +75,7 @@ class HttpTaskService extends TaskService {
       {required int taskId,
       required int? newParentId,
       required int newChildrenIndex}) async {
-    final res = await http.put(Uri.parse('$apiUrl/task/$taskId'), body: {
+    await http.put(Uri.parse('$apiUrl/task/$taskId'), body: {
       "parent": newParentId == null ? "noparent" : newParentId.toString(),
     });
     // TODO: Ordering of children

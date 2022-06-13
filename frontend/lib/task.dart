@@ -42,6 +42,7 @@ class Task {
       name: json["name"],
       quota: json["quota"],
       quotaTimeUnit: QuotaTimeUnit.fromString(json["quotaInterval"]),
+      children: [],
     );
   }
 }
