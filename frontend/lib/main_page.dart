@@ -101,8 +101,8 @@ class MainPage extends HookConsumerWidget {
                               selectedTask.value!.id, dtr),
                           onDelete: (aid) =>
                               activityService.deleteActivity(aid),
-                          onStartChange: (aid, dtr) =>
-                              activityService.updateRange(aid, dtr, null),
+                          onStartChange: (aid, dtr, duration) => activityService
+                              .updateRange(aid, dtr, dtr.add(duration)),
                           onEndChange: (aid, dtr) =>
                               activityService.updateRange(aid, null, dtr),
                         ),

@@ -29,7 +29,7 @@ class ActivityPanel extends ConsumerWidget {
   }) : super(key: key);
 
   final List<ActivityData> activities;
-  final Function(int id, DateTime newStart)? onStartChange;
+  final Function(int id, DateTime newStart, Duration)? onStartChange;
   final Function(int id, DateTime newEnd)? onEndChange;
   final Function(int id)? onDelete;
   final Function(DateTimeRange)? onCreate;
@@ -97,7 +97,8 @@ class ActivityPanel extends ConsumerWidget {
                     context,
                     showTitleActions: true,
                     onConfirm: (dt) {
-                      onStartChange?.call(activity.id, dt);
+                      onStartChange?.call(
+                          activity.id, dt, activity.range.duration);
                     },
                     currentTime: activity.range.start,
                     maxTime: activity.range.end,
