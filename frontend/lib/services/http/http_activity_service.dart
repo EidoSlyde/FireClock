@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:fireclock/services/activity_service.dart';
 import 'package:fireclock/services/http/http_settings.dart';

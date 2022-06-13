@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './user.dto';
@@ -24,29 +24,18 @@ export class UserService {
     return this.repository.save(user);
   }
 
-  public updateUser(id: number, body: CreateUserDto): Promise<User> {
-    const user: User = new User();
-
-    user.user_id = id;
-    user.username = body.username;
-    user.email = body.email;
-    user.hashed_password = hashPassword(body.password);
-
-    return this.repository.save(user);
-  }
-
   public async deleteUser(id: number): Promise<User> {
     return this.repository.remove(await this.getUser(id));
   }
 
   public async login(username: string, password: string): Promise<User> {
-    const user: User = await this.repository.findOne({
-      where: { username },
-    });
+    const user: User = await this.repository.findOne({ where: { username } });
 
-    if (user && bcrypt.comparePassword(password, user.hashed_password)) {
-      return user;
-    }
+    if (!user) throw new HttpException('User not found', 400);
+    if (!(await bcrypt.compare(password, user.hashed_password)))
+      throw new HttpException('Invalid password', 400);
+
+    return user;
   }
 }
 
