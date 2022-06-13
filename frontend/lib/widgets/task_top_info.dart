@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_number_picker/flutter_number_picker.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../task.dart';
 
@@ -22,9 +23,15 @@ class TaskTopInfo extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textController = useTextEditingController(text: task.name);
+    BehaviorSubject<String> textChange;
 
     useEffect(() {
-      textController.addListener(() => onNameChange(textController.text));
+      textChange = BehaviorSubject();
+      textChange
+          .debounceTime(const Duration(milliseconds: 256))
+          .listen((value) => onNameChange(value));
+      textController.addListener(() => textChange.add(textController.text));
+      return () => textChange.close();
     }, [textController]);
 
     final minutes = useState<int>(task.quota % 60);

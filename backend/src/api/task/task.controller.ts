@@ -1,13 +1,15 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Inject,
   Param,
   ParseIntPipe,
   Post,
+  Put,
 } from '@nestjs/common';
-import { CreateTaskDto } from './task.dto';
+import { CreateTaskDto, UpdateTaskDto } from './task.dto';
 import { Task } from './task.entity';
 import { TaskService } from './task.service';
 
@@ -31,15 +33,15 @@ export class TaskController {
     return this.service.createTask(body);
   }
 
-  @Post()
+  @Put(':id')
   public updateTask(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: CreateTaskDto,
+    @Body() body: UpdateTaskDto,
   ): Promise<Task> {
     return this.service.updateTask(id, body);
   }
 
-  @Post()
+  @Delete(':id')
   public deleteTask(@Param('id', ParseIntPipe) id: number): Promise<Task> {
     return this.service.deleteTask(id);
   }

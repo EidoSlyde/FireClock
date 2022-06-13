@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:fireclock/services/http/http_task_service.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:rxdart/rxdart.dart';
 import '../task.dart';
@@ -149,4 +150,4 @@ class DummyTaskService extends TaskService {
 }
 
 final Provider<TaskService> taskServiceProvider =
-    Provider((ref) => DummyTaskService());
+    Provider((ref) => HttpTaskService());

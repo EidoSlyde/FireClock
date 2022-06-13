@@ -7,7 +7,6 @@ import { getEnvPath } from './common/helper/env.helper';
 import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
 import { UserModule } from './api/user/user.module';
 import { TaskModule } from './api/task/task.module';
-import { QuotaModule } from './api/quota/quota.module';
 import { ActivityModule } from './api/activity/activity.module';
 import { AuthModule } from './auth/auth.module';
 import { AuthMiddleware } from './middleware/auth.middleware';
@@ -20,7 +19,6 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
     UserModule,
     TaskModule,
-    QuotaModule,
     ActivityModule,
     AuthModule,
   ],

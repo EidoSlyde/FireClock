@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { TypeOrmOptionsFactory, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { User } from 'src/api/user/user.entity';
 import { Task } from 'src/api/task/task.entity';
-import { Quota } from 'src/api/quota/quota.entity';
 import { Activity } from 'src/api/activity/activity.entity';
 
 @Injectable()
@@ -19,7 +18,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       database: this.config.get<string>('DATABASE_NAME'),
       username: this.config.get<string>('DATABASE_USER'),
       password: this.config.get<string>('DATABASE_PASSWORD'),
-      entities: [User, Task, Quota, Activity],
+      entities: [User, Task, Activity],
       migrations: ['dist/migrations/*.{ts,js}'],
       migrationsTableName: 'typeorm_migrations',
       logger: 'file',

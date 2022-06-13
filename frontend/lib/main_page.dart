@@ -25,8 +25,9 @@ class MainPage extends HookConsumerWidget {
     final user = userSnapshot.data!;
 
     final taskService = ref.read(taskServiceProvider);
-    final AsyncSnapshot<List<Task>> tasksSnapshot =
-        useStream(taskService.getTasksOfUser(user.userId));
+    final AsyncSnapshot<List<Task>> tasksSnapshot = useStream(useMemoized(
+        () => taskService.getTasksOfUser(user.userId), [user.userId]));
+
     if (!tasksSnapshot.hasData) return const Text("Couldn't fetch tasks");
     final tasks = tasksSnapshot.data!;
     useEffect(() {

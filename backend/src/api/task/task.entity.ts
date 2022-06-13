@@ -14,11 +14,17 @@ export class Task {
   @Column({ type: 'int' })
   public user_id: number;
 
-  @Column({ type: 'int' })
-  public parent: number;
+  @Column({ type: 'int', nullable: true })
+  public parent?: number;
 
   @Column({ type: 'varchar', length: 120 })
   public name: string;
+
+  @Column({ type: 'int', default: 0 })
+  public quota: number = 0;
+
+  @Column({ type: 'varchar', length: 5, default: 'day' })
+  public quotaInterval = 'day';
 
   @Column({ type: 'boolean', default: false })
   public isDeleted: boolean;

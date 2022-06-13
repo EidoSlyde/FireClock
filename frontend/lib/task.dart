@@ -35,12 +35,36 @@ class Task {
           quota: quota ?? this.quota,
           quotaTimeUnit: quotaTimeUnit ?? this.quotaTimeUnit,
           children: children ?? this.children);
+
+  static Task fromJSON(dynamic json) {
+    return Task(
+      id: json["task_id"],
+      name: json["name"],
+      quota: json["quota"],
+      quotaTimeUnit: QuotaTimeUnit.fromString(json["quotaInterval"]),
+    );
+  }
 }
 
 enum QuotaTimeUnit {
   day,
   week,
-  month,
+  month;
+
+  static QuotaTimeUnit fromString(String str) {
+    if (str == "day") return QuotaTimeUnit.day;
+    if (str == "week") return QuotaTimeUnit.week;
+    if (str == "month") return QuotaTimeUnit.month;
+    throw Exception("Unknown QuotaTimeUnit: $str");
+  }
+
+  @override
+  String toString() {
+    if (this == QuotaTimeUnit.day) return "day";
+    if (this == QuotaTimeUnit.week) return "week";
+    if (this == QuotaTimeUnit.month) return "month";
+    throw Exception("Unknown QuotaTimeUnit: $this");
+  }
 }
 
 enum ActivityTimeUnit {

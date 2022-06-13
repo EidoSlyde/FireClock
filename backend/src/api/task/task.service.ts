@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateTaskDto } from './task.dto';
+import { CreateTaskDto, UpdateTaskDto } from './task.dto';
 import { Task } from './task.entity';
 
 @Injectable()
@@ -22,19 +22,20 @@ export class TaskService {
 
     task.name = body.name;
     task.user_id = body.user_id;
-    task.parent = body.parent;
 
     return this.repository.save(task);
   }
 
-  public updateTask(id: number, body: CreateTaskDto): Promise<Task> {
-    const task: Task = new Task();
-
-    task.task_id = id;
-    task.name = body.name;
-    task.user_id = body.user_id;
-    task.parent = body.parent;
-
+  public async updateTask(id: number, body: UpdateTaskDto): Promise<Task> {
+    const task: Task = await this.repository.findOne({
+      where: { task_id: id },
+    });
+    console.log(body);
+    if (!!body.name) task.name = body.name;
+    if (!!body.parent)
+      task.parent = body.parent == 'noparent' ? null : body.parent;
+    if (!!body.quota) task.quota = body.quota;
+    if (!!body.quotaInterval) task.quotaInterval = body.quotaInterval;
     return this.repository.save(task);
   }
 
